@@ -1,27 +1,27 @@
 import { Intro } from "@/components/Intro";
-import { Nav } from "@/components/Nav";
+import { SiteNav } from "@/components/SiteNav";
 import { Hero } from "@/components/sections/Hero";
-import { PorQueExistimos } from "@/components/sections/PorQueExistimos";
-import { CoronaDeLaurel } from "@/components/sections/CoronaDeLaurel";
-import { Origen } from "@/components/sections/Origen";
 import { NuestroCafe } from "@/components/sections/NuestroCafe";
+import { PorQueExistimos } from "@/components/sections/PorQueExistimos";
+import { Corona } from "@/components/sections/Corona";
+import { Origen } from "@/components/sections/Origen";
 import { Proceso } from "@/components/sections/Proceso";
-import { Footer } from "@/components/Footer";
+import { Contacto } from "@/components/sections/Contacto";
 
 export default function Home() {
   return (
     <>
       <Intro />
-      <Nav />
+      <SiteNav />
       <main>
         <Hero />
-        <PorQueExistimos />
-        <CoronaDeLaurel />
-        <Origen />
         <NuestroCafe />
+        <PorQueExistimos />
+        <Corona />
+        <Origen />
         <Proceso />
       </main>
-      <Footer />
+      <Contacto />
     </>
   );
 }

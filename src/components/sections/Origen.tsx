@@ -1,45 +1,89 @@
-import Image from "next/image";
-import { Reveal } from "@/components/Reveal";
+import {
+  CountUp,
+  MaskedLine,
+  Reveal,
+  Stagger,
+  StaggerItem,
+} from "@/components/motion/Primitives";
+import { ImageSlot } from "@/components/motion/ImageSlot";
+import { SectionHead } from "@/components/SectionHead";
+
+const DATOS = [
+  { label: "Municipio", value: "La Plata" },
+  { label: "Departamento", value: "Huila" },
+  { label: "Finca", value: "Pedregal" },
+  { label: "Extensión", value: "Un par de hectáreas" },
+];
 
 export function Origen() {
   return (
-    <section id="origen" className="relative overflow-hidden bg-ink px-6 py-24 text-cream sm:px-8 md:py-32">
-      <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
-        <Reveal>
-          <p className="text-xs uppercase tracking-[0.25em] text-gold">
-            El origen · Finca Pedregal
-          </p>
-          <h2 className="mt-4 font-serif-italic text-5xl text-white sm:text-6xl">
-            1.900 m.s.n.m
-          </h2>
-          <p className="mt-6 max-w-md text-lg text-cream/80">
-            En las montañas de La Plata, al sur del Huila, está la Finca Pedregal.
-            Es pequeña — apenas un par de hectáreas sembradas en café — y es de
-            Laura y José Enrique Ceballos.
-          </p>
-          <p className="mt-4 max-w-md text-lg text-cream/80">
-            A esta altura el café madura despacio: más tiempo en la mata, más
-            dulzor, más cuerpo y una acidez limpia y brillante. Y el clima del
-            Huila permite algo que pocas regiones de Colombia pueden hacer: secar
-            el grano al sol, sin prisa.
-          </p>
-          <p className="mt-6 max-w-md border-l-2 border-gold pl-4 text-base font-medium text-white">
-            Conocemos su tierra, su proceso y su nombre. Por eso podemos responder
-            por cada grano.
-          </p>
-        </Reveal>
+    <section id="origen" className="bg-cream text-ink">
+      <div className="px-6 pb-24 pt-20 sm:px-10 md:pb-32 md:pt-28">
+        <SectionHead n="04" label="El origen" tone="light" />
 
-        <Reveal delay={0.15}>
-          <div className="mx-auto max-w-sm">
-            <Image
-              src="/images/ilustracion-montana-cosechero.jpg"
-              alt="Ilustración del cosechero caminando en la montaña"
-              width={1100}
-              height={1100}
-              className="w-full"
-            />
+        {/* la altura como protagonista */}
+        <div className="mt-14 flex flex-wrap items-baseline gap-x-6 gap-y-2">
+          <h2 className="display text-[clamp(4.5rem,20vw,18rem)] leading-[0.78]">
+            <CountUp to={1900} />
+          </h2>
+          <span className="micro pb-4 text-rust">metros sobre el nivel del mar</span>
+        </div>
+
+        <div className="mt-16 grid gap-14 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-5">
+            <h3 className="text-[clamp(1.8rem,4vw,3rem)] leading-[0.95]">
+              <MaskedLine>
+                <span className="display">Madura</span>
+              </MaskedLine>
+              <MaskedLine delay={0.08}>
+                <span className="display-serif text-rust">despacio.</span>
+              </MaskedLine>
+            </h3>
+
+            <Reveal delay={0.15}>
+              <p className="mt-7 max-w-md text-lg leading-relaxed text-ink/75">
+                En las montañas de La Plata, al sur del Huila, está la Finca
+                Pedregal. A esta altura el café pasa más tiempo en la mata: más
+                dulzor, más cuerpo, y una acidez limpia y brillante.
+              </p>
+            </Reveal>
+            <Reveal delay={0.22}>
+              <p className="mt-5 max-w-md text-lg leading-relaxed text-ink/75">
+                El clima del Huila permite algo que pocas regiones de Colombia
+                pueden hacer: secar el grano al sol, sin prisa.
+              </p>
+            </Reveal>
+
+            <Stagger className="mt-10" delay={0.1}>
+              {DATOS.map((d) => (
+                <StaggerItem
+                  key={d.label}
+                  className="flex items-baseline justify-between border-t border-ink/12 py-3.5"
+                >
+                  <span className="micro text-ink/40">{d.label}</span>
+                  <span className="text-lg font-medium">{d.value}</span>
+                </StaggerItem>
+              ))}
+            </Stagger>
+
+            <Reveal delay={0.2}>
+              <p className="mt-10 max-w-sm border-l-2 border-rust pl-5 text-lg font-medium leading-snug">
+                Conocemos su tierra, su proceso y su nombre. Por eso podemos
+                responder por cada grano.
+              </p>
+            </Reveal>
           </div>
-        </Reveal>
+
+          <div className="lg:col-span-6 lg:col-start-7">
+            <Reveal delay={0.1}>
+              <ImageSlot
+                tone="rust"
+                ratio="aspect-[4/3]"
+                note="Panorámica de la Finca Pedregal: la montaña y los cafetales en ladera, tomada de lejos y en horizontal. Es la foto que ancla toda esta sección."
+              />
+            </Reveal>
+          </div>
+        </div>
       </div>
     </section>
   );

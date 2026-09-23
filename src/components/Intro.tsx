@@ -1,128 +1,156 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { CosecheroIcon } from "./CosecheroIcon";
+import { EASE_OUT_EXPO } from "./motion/Primitives";
 
-const TAGLINE = "La grandeza se cultiva";
+const TAGLINE = ["La", "grandeza", "se", "cultiva"];
 
 export function Intro() {
-  const [stage, setStage] = useState<"tagline" | "logo" | "done">("tagline");
-  const [dismissed, setDismissed] = useState(false);
+  const [stage, setStage] = useState<"tagline" | "marca">("tagline");
+  const [gone, setGone] = useState(false);
+  const reduce = useReducedMotion();
+
+  const dismiss = useCallback(() => setGone(true), []);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setStage("logo"), 2200);
-    return () => clearTimeout(t1);
-  }, []);
+    const t = setTimeout(() => setStage("marca"), reduce ? 600 : 2400);
+    return () => clearTimeout(t);
+  }, [reduce]);
 
   useEffect(() => {
-    if (dismissed) {
+    if (gone) {
       document.body.style.overflow = "";
       return;
     }
     document.body.style.overflow = "hidden";
+    window.scrollTo(0, 0);
     return () => {
       document.body.style.overflow = "";
     };
-  }, [dismissed]);
+  }, [gone]);
 
   useEffect(() => {
-    if (stage !== "logo") return;
-    const onScroll = () => setDismissed(true);
-    const onWheel = () => setDismissed(true);
-    const onTouch = () => setDismissed(true);
-    window.addEventListener("wheel", onWheel, { passive: true });
-    window.addEventListener("touchstart", onTouch, { passive: true });
-    window.addEventListener("keydown", onScroll);
+    if (stage !== "marca" || gone) return;
+    const opts = { passive: true } as const;
+    window.addEventListener("wheel", dismiss, opts);
+    window.addEventListener("touchmove", dismiss, opts);
+    window.addEventListener("keydown", dismiss);
     return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouch);
-      window.removeEventListener("keydown", onScroll);
+      window.removeEventListener("wheel", dismiss);
+      window.removeEventListener("touchmove", dismiss);
+      window.removeEventListener("keydown", dismiss);
     };
-  }, [stage]);
-
-  const letters = TAGLINE.split("");
+  }, [stage, gone, dismiss]);
 
   return (
     <AnimatePresence>
-      {!dismissed && (
+      {!gone && (
         <motion.div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-ink text-cream"
-          exit={{ opacity: 0, transition: { duration: 0.6, ease: "easeInOut" } }}
+          className="fixed inset-0 z-[100] flex flex-col justify-between bg-ink px-6 py-8 sm:px-10"
+          exit={{ y: "-100%", transition: { duration: 1, ease: EASE_OUT_EXPO } }}
         >
-          <AnimatePresence mode="wait">
-            {stage === "tagline" && (
-              <motion.h1
-                key="tagline"
-                className="px-8 text-center font-serif-italic text-3xl sm:text-4xl md:text-5xl"
-                exit={{ opacity: 0, y: -16, transition: { duration: 0.5 } }}
-              >
-                {letters.map((ch, i) => (
-                  <motion.span
-                    key={i}
-                    className="inline-block"
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.35 + i * 0.035, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                  >
-                    {ch === " " ? " " : ch}
-                  </motion.span>
-                ))}
-              </motion.h1>
-            )}
+          {/* franja superior */}
+          <div className="flex items-start justify-between">
+            <span className="micro text-cream/40">Finca Pedregal</span>
+            <span className="micro text-cream/40">La Plata · Huila</span>
+          </div>
 
-            {stage === "logo" && (
-              <motion.div
-                key="logo"
-                className="flex flex-col items-center gap-6 px-8 text-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8 }}
-              >
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.94 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-56 sm:w-72"
+          <div className="flex flex-1 items-center justify-center">
+            <AnimatePresence mode="wait">
+              {stage === "tagline" ? (
+                <motion.h1
+                  key="tagline"
+                  className="display-serif text-center text-[clamp(2.2rem,8vw,6rem)] text-cream"
+                  exit={{
+                    opacity: 0,
+                    filter: "blur(6px)",
+                    transition: { duration: 0.6, ease: "easeIn" },
+                  }}
                 >
-                  <Image
-                    src="/images/logo-cafe-laurel-blanco.png"
-                    alt="Café Laurel"
-                    width={760}
-                    height={307}
-                    priority
-                    className="w-full h-auto"
-                  />
-                </motion.div>
-
+                  {TAGLINE.map((w, i) => (
+                    <span key={w} className="inline-block overflow-hidden pb-[0.1em] align-bottom">
+                      <motion.span
+                        className="inline-block"
+                        initial={reduce ? { opacity: 0 } : { y: "110%" }}
+                        animate={reduce ? { opacity: 1 } : { y: 0 }}
+                        transition={{
+                          duration: 1,
+                          delay: 0.25 + i * 0.12,
+                          ease: EASE_OUT_EXPO,
+                        }}
+                      >
+                        {w}
+                        {i < TAGLINE.length - 1 ? " " : ""}
+                      </motion.span>
+                    </span>
+                  ))}
+                </motion.h1>
+              ) : (
                 <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  className="h-16 w-16 sm:h-20 sm:w-20"
-                >
-                  <CosecheroIcon className="h-full w-full" />
-                </motion.div>
-
-                <motion.button
-                  type="button"
-                  onClick={() => setDismissed(true)}
+                  key="marca"
+                  className="flex flex-col items-center gap-8"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7, duration: 0.6 }}
-                  className="mt-4 flex flex-col items-center gap-2 text-xs tracking-[0.2em] text-cream/70 uppercase"
+                  transition={{ duration: 0.7 }}
                 >
-                  Desliza para descubrir
-                  <motion.span
-                    className="h-8 w-px bg-cream/40"
-                    animate={{ scaleY: [0.4, 1, 0.4], opacity: [0.3, 1, 0.3] }}
-                    transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-                  />
+                  <motion.div
+                    initial={reduce ? {} : { clipPath: "inset(0 0 100% 0)" }}
+                    animate={{ clipPath: "inset(0 0 0% 0)" }}
+                    transition={{ duration: 1.1, ease: EASE_OUT_EXPO }}
+                    className="w-[min(70vw,26rem)]"
+                  >
+                    <Image
+                      src="/images/logo-cafe-laurel-blanco.png"
+                      alt="Café Laurel"
+                      width={760}
+                      height={307}
+                      priority
+                      className="h-auto w-full"
+                    />
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.45, duration: 0.8, ease: EASE_OUT_EXPO }}
+                    className="h-16 w-16 text-cream sm:h-20 sm:w-20"
+                  >
+                    <CosecheroIcon className="h-full w-full" />
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* pie: indicador de scroll, solo aquí */}
+          <div className="flex h-16 items-end justify-center">
+            <AnimatePresence>
+              {stage === "marca" && (
+                <motion.button
+                  type="button"
+                  onClick={dismiss}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.9, duration: 0.8 }}
+                  className="group flex flex-col items-center gap-3"
+                >
+                  <span className="micro text-cream/50 transition-colors group-hover:text-rust">
+                    Desliza para descubrir
+                  </span>
+                  <span className="relative block h-10 w-px overflow-hidden bg-cream/15">
+                    <motion.span
+                      className="absolute inset-x-0 top-0 block h-1/2 bg-rust"
+                      animate={{ y: ["-100%", "200%"] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                  </span>
                 </motion.button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )}
+            </AnimatePresence>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

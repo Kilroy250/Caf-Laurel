@@ -1,91 +1,107 @@
-import Image from "next/image";
-import { Reveal } from "@/components/Reveal";
+import { MaskedLine, Reveal } from "@/components/motion/Primitives";
+import { ImageSlot } from "@/components/motion/ImageSlot";
+import { SectionHead } from "@/components/SectionHead";
 
-type Step = {
-  n: string;
-  title: string;
-  subtitle: string;
-  text: string;
-  image?: string;
-  alt?: string;
-};
-
-const STEPS: Step[] = [
+const PASOS = [
   {
     n: "01",
-    title: "Cosecha selectiva",
-    subtitle: "Solo cerezas maduras",
-    text: "Se recolectan a mano únicamente las cerezas de rojo intenso: el punto ideal de azúcares naturales y una base limpia desde el origen.",
-    image: "/images/cerezas-cafe-maduras-1.jpg",
-    alt: "Cerezas maduras de rojo intenso",
+    titulo: "Cosecha selectiva",
+    clave: "Solo cerezas maduras",
+    texto:
+      "Se recolectan a mano únicamente las cerezas de rojo intenso: el punto ideal de azúcares naturales y una base limpia desde el origen.",
   },
   {
     n: "02",
-    title: "Despulpado",
-    subtitle: "El grano se libera",
-    text: "Se retira la cáscara de la cereza para evitar fermentaciones no deseadas y preparar el grano para la siguiente etapa.",
+    titulo: "Despulpado",
+    clave: "El grano se libera",
+    texto:
+      "Se retira la cáscara de la cereza para evitar fermentaciones no deseadas y preparar el grano para la siguiente etapa.",
   },
   {
     n: "03",
-    title: "Fermentación controlada",
-    subtitle: "De 12 a 24 horas",
-    text: "En tanques, según la temperatura y el clima, el grano desarrolla su carácter: su acidez brillante y su complejidad aromática.",
+    titulo: "Fermentación",
+    clave: "De 12 a 24 horas",
+    texto:
+      "En tanques, según la temperatura y el clima, el grano desarrolla su carácter: su acidez brillante y su complejidad aromática.",
   },
   {
     n: "04",
-    title: "Lavado",
-    subtitle: "Una taza transparente",
-    text: "Con agua limpia se eliminan todos los residuos hasta obtener un pergamino limpio, que garantiza una taza definida y sin notas indeseadas.",
+    titulo: "Lavado",
+    clave: "Una taza transparente",
+    texto:
+      "Con agua limpia se eliminan todos los residuos hasta obtener un pergamino limpio, que garantiza una taza definida y sin notas indeseadas.",
   },
   {
     n: "05",
-    title: "Secado al sol",
-    subtitle: "Lento y uniforme",
-    text: "En paseras, con ventilación natural, hasta alcanzar una humedad del 10–12%. Este secado estabiliza el grano y conserva su calidad.",
-    image: "/images/cafe-secado-al-sol-paseras.jpg",
-    alt: "Café secándose al sol en paseras",
+    titulo: "Secado al sol",
+    clave: "Lento y uniforme",
+    texto:
+      "En paseras, con ventilación natural, hasta alcanzar una humedad del 10–12 %. Este secado estabiliza el grano y conserva su calidad.",
   },
 ];
 
 export function Proceso() {
   return (
-    <section id="proceso" className="bg-ink px-6 py-24 text-cream sm:px-8 md:py-32">
-      <div className="mx-auto max-w-3xl">
-        <Reveal>
-          <p className="text-xs uppercase tracking-[0.25em] text-gold">
-            Del árbol a tu taza
-          </p>
-          <h2 className="mt-4 text-4xl font-extrabold leading-[1.05] sm:text-5xl">
-            Un proceso sin atajos.
-          </h2>
-          <p className="mt-4 text-lg text-cream/70">
-            Así se hace el café en la Finca Pedregal.
-          </p>
-        </Reveal>
+    <section id="proceso" className="bg-ink text-cream">
+      <div className="px-6 pb-24 pt-20 sm:px-10 md:pb-32 md:pt-28">
+        <SectionHead n="05" label="Del árbol a tu taza" tone="dark" />
 
-        <div className="relative mt-16 border-l-2 border-cream/15 pl-8 sm:pl-12">
-          {STEPS.map((step, i) => (
-            <Reveal key={step.n} delay={0.05} className="relative mb-16 last:mb-0">
-              <span className="absolute -left-[calc(2rem+7px)] top-1.5 h-3 w-3 rounded-full bg-gold sm:-left-[calc(3rem+7px)]" />
-              <p className="text-xs uppercase tracking-[0.2em] text-gold">
-                {step.n} · {step.subtitle}
-              </p>
-              <h3 className="mt-2 text-2xl font-bold sm:text-3xl">{step.title}</h3>
-              <p className="mt-3 max-w-lg text-cream/75">{step.text}</p>
+        <div className="mt-14 grid gap-14 lg:grid-cols-12 lg:gap-10">
+          {/* columna fija */}
+          <div className="lg:col-span-4">
+            <div className="lg:sticky lg:top-28">
+              <h2 className="text-[clamp(2.4rem,5.5vw,4.5rem)] leading-[0.92]">
+                <MaskedLine>
+                  <span className="display">Un proceso</span>
+                </MaskedLine>
+                <MaskedLine delay={0.08}>
+                  <span className="display-serif text-rust">sin atajos.</span>
+                </MaskedLine>
+              </h2>
 
-              {step.image && (
-                <div className="mt-6 overflow-hidden rounded-2xl">
-                  <Image
-                    src={step.image}
-                    alt={step.alt ?? step.title}
-                    width={900}
-                    height={600}
-                    className="w-full object-cover"
+              <Reveal delay={0.15}>
+                <p className="mt-6 max-w-xs text-lg leading-relaxed text-cream/70">
+                  Cinco etapas, todas en la finca. Así se hace el café en
+                  Pedregal.
+                </p>
+              </Reveal>
+
+              <Reveal delay={0.2}>
+                <div className="mt-10 hidden max-w-xs lg:block">
+                  <ImageSlot
+                    tone="ink"
+                    ratio="aspect-[4/5]"
+                    note="Primer plano de las manos del recolector sosteniendo cerezas rojas. Un detalle humano, no un paisaje."
                   />
                 </div>
-              )}
-            </Reveal>
-          ))}
+              </Reveal>
+            </div>
+          </div>
+
+          {/* etapas */}
+          <ol className="lg:col-span-7 lg:col-start-6">
+            {PASOS.map((p, i) => (
+              <li key={p.n} className="border-t border-cream/12 py-10 first:border-t-0 first:pt-0">
+                <Reveal delay={0.05}>
+                  <div className="flex items-baseline gap-5">
+                    <span className="display text-[clamp(2.5rem,6vw,4.5rem)] leading-none text-rust">
+                      {p.n}
+                    </span>
+                    <div>
+                      <p className="micro text-cream/40">{p.clave}</p>
+                      <h3 className="mt-2 text-[clamp(1.5rem,3.2vw,2.5rem)] font-bold leading-tight">
+                        {p.titulo}
+                      </h3>
+                    </div>
+                  </div>
+                  <p className="mt-5 max-w-lg text-lg leading-relaxed text-cream/70 lg:pl-[calc(clamp(2.5rem,6vw,4.5rem)+1.25rem)]">
+                    {p.texto}
+                  </p>
+                </Reveal>
+                {i === PASOS.length - 1 && <span className="sr-only">Fin del proceso</span>}
+              </li>
+            ))}
+          </ol>
         </div>
       </div>
     </section>
