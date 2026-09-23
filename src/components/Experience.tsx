@@ -1,33 +1,41 @@
 "use client";
 
-import { type ReactNode, createContext, useContext, useState } from "react";
-import { LayoutGroup } from "framer-motion";
+import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
+import { useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Intro } from "./Intro";
 import { SiteNav } from "./SiteNav";
-
-const EnteredContext = createContext(false);
-
-/** true una vez que la intro dio paso al sitio. */
-export const useEntered = () => useContext(EnteredContext);
+import { INTRO_RANGE, IntroContext, type IntroPhase } from "./intro-context";
 
 /**
- * Orquesta la entrada al sitio. El campesino es un único elemento compartido
- * (layoutId) entre la intro y la barra: al pasar de una a otra, Framer Motion
- * interpola su tamaño y posición — de grande y centrado, a pequeño y arriba.
- *
- * El contenido se renderiza siempre visible bajo la intro: así ninguna
- * animación puede dejar la página en blanco si no llega a ejecutarse.
+ * Orquesta la entrada al sitio. El scroll del usuario alimenta un valor
+ * virtual (0 → INTRO_RANGE) que un resorte sobreamortiguado suaviza: la
+ * transición sigue la rueda o el dedo, se puede devolver, y nunca rebota.
  */
 export function Experience({ children }: { children: ReactNode }) {
-  const [entered, setEntered] = useState(false);
+  const [phase, setPhase] = useState<IntroPhase>("intro");
+
+  const virtual = useMotionValue(0);
+  const raw = useTransform(virtual, [0, INTRO_RANGE], [0, 1]);
+  const progress = useSpring(raw, { stiffness: 55, damping: 22 });
+
+  const heroLogoRef = useRef<HTMLDivElement>(null);
+  const navMarkRef = useRef<HTMLDivElement>(null);
+
+  const arrive = useCallback(() => setPhase((p) => (p === "intro" ? "arrived" : p)), []);
+  const release = useCallback(() => setPhase("released"), []);
+
+  const value = useMemo(
+    () => ({ phase, progress, heroLogoRef, navMarkRef }),
+    [phase, progress],
+  );
 
   return (
-    <LayoutGroup>
-      <EnteredContext.Provider value={entered}>
-        {!entered && <Intro onEnter={() => setEntered(true)} />}
-        <SiteNav showMark={entered} />
-        {children}
-      </EnteredContext.Provider>
-    </LayoutGroup>
+    <IntroContext.Provider value={value}>
+      {phase !== "released" && (
+        <Intro virtual={virtual} onArrive={arrive} onRelease={release} />
+      )}
+      <SiteNav />
+      {children}
+    </IntroContext.Provider>
   );
 }

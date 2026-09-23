@@ -205,11 +205,7 @@ export function CountUp({
   const [value, setValue] = useState(0);
 
   useEffect(() => {
-    if (!inView) return;
-    if (reduce) {
-      setValue(to);
-      return;
-    }
+    if (!inView || reduce) return;
 
     let frame = 0;
     const start = performance.now();
@@ -224,9 +220,12 @@ export function CountUp({
     return () => cancelAnimationFrame(frame);
   }, [inView, to, duration, reduce]);
 
+  // con movimiento reducido se muestra la cifra final, sin conteo
+  const shown = reduce && inView ? to : value;
+
   return (
     <span ref={ref} className={className}>
-      {format(value)}
+      {format(shown)}
     </span>
   );
 }

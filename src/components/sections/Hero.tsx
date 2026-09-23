@@ -1,19 +1,26 @@
 "use client";
 
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { EASE_OUT_EXPO, Parallax } from "@/components/motion/Primitives";
+import { type MotionValue, motion, useTransform } from "framer-motion";
+import { Parallax } from "@/components/motion/Primitives";
 import { goTo } from "@/components/SiteNav";
-import { useEntered } from "@/components/Experience";
+import { INTRO_DONE, useIntro } from "@/components/intro-context";
+
+/** Aparición ligada al tramo [from, to] del progreso de la intro. */
+function useIntroReveal(progress: MotionValue<number>, from: number, to: number, rise: number) {
+  const opacity = useTransform(progress, [from, to], [0, 1]);
+  const y = useTransform(progress, [from, to], [rise, 0]);
+  return { opacity, y };
+}
 
 export function Hero() {
-  const entered = useEntered();
+  const { phase, progress, heroLogoRef } = useIntro();
 
-  // los elementos entran cuando la intro cede el paso, no al montar
-  const ENTRA = {
-    initial: { opacity: 0, y: 18 },
-    animate: entered ? { opacity: 1, y: 0 } : { opacity: 0, y: 18 },
-  };
+  // la bolsa se materializa mientras el campesino sube y le despeja el centro
+  const bag = useIntroReveal(progress, 0.24, 0.84, 40);
+  const bagScale = useTransform(progress, [0.24, 0.84], [0.94, 1]);
+  const essence = useIntroReveal(progress, 0.55, 0.9, 22);
+  const actions = useIntroReveal(progress, 0.62, INTRO_DONE, 18);
 
   return (
     <section
@@ -21,38 +28,41 @@ export function Hero() {
       className="relative flex min-h-screen items-center overflow-hidden bg-cream pt-28 pb-16 text-ink"
     >
       <div className="relative mx-auto grid w-full max-w-[1500px] grid-cols-1 items-center gap-14 px-6 sm:px-10 lg:grid-cols-12 lg:gap-8">
-        {/* izquierda — identidad */}
-        <motion.div
-          {...ENTRA}
-          transition={{ delay: 0.5, duration: 0.9, ease: EASE_OUT_EXPO }}
-          className="order-2 lg:order-1 lg:col-span-3"
-        >
-          <Image
-            src="/images/logo-cafe-laurel-negro.png"
-            alt="Café Laurel"
-            width={760}
-            height={307}
-            priority
+        {/* izquierda — el logotipo aterriza aquí desde la intro; su lugar no se anima */}
+        <div className="order-2 lg:order-1 lg:col-span-3">
+          <div
+            ref={heroLogoRef}
             className="w-full max-w-[15rem] lg:max-w-[17rem]"
-          />
-
-          <p className="micro mt-6 text-ink/40">Finca Pedregal · La Plata, Huila</p>
-
-          <button
-            onClick={() => goTo("nuestro-cafe")}
-            className="group mt-8 inline-flex items-center gap-3 rounded-full bg-ink py-3.5 pl-6 pr-3.5 text-cream transition-colors hover:bg-rust"
+            style={{ opacity: phase === "intro" ? 0 : 1 }}
           >
-            <span className="micro">Quiero uno</span>
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cream text-ink transition-transform group-hover:translate-x-0.5">
-              →
-            </span>
-          </button>
-        </motion.div>
+            <Image
+              src="/images/logo-cafe-laurel-negro.png"
+              alt="Café Laurel"
+              width={760}
+              height={307}
+              priority
+              className="h-auto w-full"
+            />
+          </div>
+
+          <motion.div style={actions}>
+            <p className="micro mt-6 text-ink/40">Finca Pedregal · La Plata, Huila</p>
+
+            <button
+              onClick={() => goTo("nuestro-cafe")}
+              className="group mt-8 inline-flex items-center gap-3 rounded-full bg-ink py-3.5 pl-6 pr-3.5 text-cream transition-colors hover:bg-rust"
+            >
+              <span className="micro">Quiero uno</span>
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cream text-ink transition-transform group-hover:translate-x-0.5">
+                →
+              </span>
+            </button>
+          </motion.div>
+        </div>
 
         {/* centro — el producto */}
         <motion.div
-          {...ENTRA}
-          transition={{ delay: 0.15, duration: 1.1, ease: EASE_OUT_EXPO }}
+          style={{ ...bag, scale: bagScale }}
           className="order-1 flex justify-center lg:order-2 lg:col-span-6"
         >
           <Parallax distance={18}>
@@ -70,11 +80,7 @@ export function Hero() {
         </motion.div>
 
         {/* derecha — la esencia */}
-        <motion.div
-          {...ENTRA}
-          transition={{ delay: 0.62, duration: 0.9, ease: EASE_OUT_EXPO }}
-          className="order-3 lg:col-span-3"
-        >
+        <motion.div style={essence} className="order-3 lg:col-span-3">
           <p className="micro text-rust">La marca</p>
 
           <p className="mt-5 max-w-sm text-base leading-relaxed text-ink/75">

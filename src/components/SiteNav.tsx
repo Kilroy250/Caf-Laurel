@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useTransform } from "framer-motion";
 import { CosecheroIcon } from "./CosecheroIcon";
 import { EASE_OUT_EXPO } from "./motion/Primitives";
+import { useIntro } from "./intro-context";
 
 export const SECTIONS = [
   { id: "nuestro-cafe", n: "01", label: "Nuestro café" },
@@ -21,8 +22,14 @@ export function goTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-export function SiteNav({ showMark = true }: { showMark?: boolean }) {
+export function SiteNav() {
+  const { phase, progress, navMarkRef } = useIntro();
   const [open, setOpen] = useState(false);
+
+  // las pestañas aparecen en el último tramo de la transición de entrada
+  const chromeOpacity = useTransform(progress, [0.5, 0.9], [0, 1]);
+  const chromeY = useTransform(progress, [0.5, 0.9], [-8, 0]);
+  const markVisible = phase !== "intro";
 
   const jump = (id: string) => {
     setOpen(false);
@@ -38,9 +45,11 @@ export function SiteNav({ showMark = true }: { showMark?: boolean }) {
     <>
       {/* mix-blend-difference invierte la barra sola sobre fondos claros u oscuros */}
       <header className="pointer-events-none fixed inset-x-0 top-0 z-[90] mix-blend-difference">
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 px-6 py-4 sm:px-10">
-          {/* izquierda */}
-          <div className="flex items-center gap-7">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 px-6 py-4 sm:px-10">
+          <motion.div
+            style={{ opacity: chromeOpacity, y: chromeY }}
+            className="flex items-center gap-5"
+          >
             <button onClick={inicio} className="pointer-events-auto shrink-0">
               <Image
                 src="/images/logo-cafe-laurel-blanco.png"
@@ -55,34 +64,35 @@ export function SiteNav({ showMark = true }: { showMark?: boolean }) {
               <button
                 key={s.id}
                 onClick={() => jump(s.id)}
-                className="pointer-events-auto hidden micro whitespace-nowrap text-cream transition-opacity hover:opacity-60 lg:block"
+                className="pointer-events-auto hidden micro whitespace-nowrap tracking-[0.16em] text-cream transition-opacity hover:opacity-60 lg:block"
               >
                 {s.label}
               </button>
             ))}
+          </motion.div>
+
+          {/* el espacio del campesino existe siempre: las pestañas no se mueven cuando aterriza */}
+          <div ref={navMarkRef} className="h-11 w-11 sm:h-14 sm:w-14">
+            <button
+              onClick={inicio}
+              aria-label="Ir al inicio"
+              tabIndex={markVisible ? 0 : -1}
+              style={{ opacity: markVisible ? 1 : 0 }}
+              className="pointer-events-auto block h-full w-full text-cream"
+            >
+              <CosecheroIcon className="h-full w-full" />
+            </button>
           </div>
 
-          {/* centro: el campesino, que llega volando desde la intro */}
-          <div className="flex justify-center">
-            {showMark && (
-              <motion.button
-                layoutId="cosechero"
-                onClick={inicio}
-                transition={{ duration: 1.1, ease: EASE_OUT_EXPO }}
-                className="pointer-events-auto h-9 w-9 text-cream sm:h-10 sm:w-10"
-              >
-                <CosecheroIcon className="h-full w-full" />
-              </motion.button>
-            )}
-          </div>
-
-          {/* derecha */}
-          <div className="flex items-center justify-end gap-7">
+          <motion.div
+            style={{ opacity: chromeOpacity, y: chromeY }}
+            className="flex items-center justify-end gap-5"
+          >
             {DERECHA.map((s) => (
               <button
                 key={s.id}
                 onClick={() => jump(s.id)}
-                className="pointer-events-auto hidden micro whitespace-nowrap text-cream transition-opacity hover:opacity-60 lg:block"
+                className="pointer-events-auto hidden micro whitespace-nowrap tracking-[0.16em] text-cream transition-opacity hover:opacity-60 lg:block"
               >
                 {s.label}
               </button>
@@ -94,7 +104,7 @@ export function SiteNav({ showMark = true }: { showMark?: boolean }) {
             >
               {open ? "Cerrar" : "Menú"}
             </button>
-          </div>
+          </motion.div>
         </div>
       </header>
 
