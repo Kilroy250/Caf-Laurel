@@ -16,7 +16,7 @@ export function PorQueExistimos() {
               <span className="display">de laurel,</span>
             </MaskedLine>
             <MaskedLine delay={0.16}>
-              <span className="display-serif text-rust">del campesino.</span>
+              <span className="display-script text-rust">del campesino.</span>
             </MaskedLine>
           </h2>
 
@@ -40,7 +40,7 @@ export function PorQueExistimos() {
           <blockquote className="text-[clamp(1.9rem,4.6vw,4rem)] leading-[1.02] lg:col-span-9">
             <MaskedWords
               text="Ese café solía viajar lejos, porque afuera pagan más."
-              className="display-serif block"
+              className="display-script block"
               stagger={0.04}
             />
             <span className="mt-6 block">

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, Instrument_Serif } from "next/font/google";
+import { Archivo, Sacramento } from "next/font/google";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -8,11 +8,12 @@ const archivo = Archivo({
   weight: ["400", "500", "600", "700", "800", "900"],
 });
 
-const instrument = Instrument_Serif({
-  variable: "--font-instrument",
+/* Provisional: sustituta gratuita de la manuscrita del logo
+   (Adobe Handwriting Ernie) hasta tener su licencia web. */
+const script = Sacramento({
+  variable: "--font-script-brand",
   subsets: ["latin"],
   weight: "400",
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -23,8 +24,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${archivo.variable} ${instrument.variable}`}>
-      <body className="bg-ink text-cream">{children}</body>
+    <html lang="es" className={`${archivo.variable} ${script.variable}`}>
+      <body className="bg-cream text-ink">{children}</body>
     </html>
   );
 }

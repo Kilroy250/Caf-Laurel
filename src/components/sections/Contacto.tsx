@@ -13,7 +13,7 @@ export function Contacto() {
             <span className="display">al productor,</span>
           </MaskedLine>
           <MaskedLine delay={0.16}>
-            <span className="display-serif text-rust">grandeza para ti.</span>
+            <span className="display-script text-rust">grandeza para ti.</span>
           </MaskedLine>
         </h2>
 

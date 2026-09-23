@@ -69,7 +69,7 @@ export function NuestroCafe() {
             <span className="display">de Colombia,</span>
           </MaskedLine>
           <MaskedLine delay={0.16}>
-            <span className="display-serif text-rust">por fin en casa.</span>
+            <span className="display-script text-rust">por fin en casa.</span>
           </MaskedLine>
         </h2>
 

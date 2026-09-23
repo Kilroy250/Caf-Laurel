@@ -55,7 +55,7 @@ export function Proceso() {
                   <span className="display">Un proceso</span>
                 </MaskedLine>
                 <MaskedLine delay={0.08}>
-                  <span className="display-serif text-rust">sin atajos.</span>
+                  <span className="display-script text-rust">sin atajos.</span>
                 </MaskedLine>
               </h2>
 

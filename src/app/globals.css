@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Paleta: neutros cálidos + acento naranja quemado del empaque */
-  --color-cream: #f5f1e8;
-  --color-cream-deep: #e8e1d3;
+  /* Paleta: casi blanco con un fondo cálido + acento naranja quemado del empaque */
+  --color-cream: #faf8f3;
+  --color-cream-deep: #efeade;
   --color-ink: #121009;
   --color-ink-soft: #1e1b13;
   --color-rust: #bc540b;
@@ -11,12 +11,12 @@
   --color-stone: #8a8378;
 
   --font-sans: var(--font-archivo);
-  --font-display: var(--font-instrument);
+  --font-script: var(--font-script-brand);
 }
 
 html {
   scroll-behavior: smooth;
-  background: var(--color-ink);
+  background: var(--color-cream);
 }
 
 body {
@@ -34,12 +34,14 @@ body {
   text-transform: uppercase;
 }
 
-.display-serif {
-  font-family: var(--font-display);
-  font-style: italic;
+/* Manuscrita de marca (la misma del logotipo). Las escrituras tienen
+   altura de x pequeña: piden cuerpo mayor y algo más de interlínea. */
+.display-script {
+  font-family: var(--font-script);
+  font-style: normal;
   font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 0.9;
+  letter-spacing: 0;
+  line-height: 1.05;
   text-transform: none;
 }
 

@@ -36,7 +36,7 @@ export function Origen() {
                 <span className="display">Madura</span>
               </MaskedLine>
               <MaskedLine delay={0.08}>
-                <span className="display-serif text-rust">despacio.</span>
+                <span className="display-script text-rust">despacio.</span>
               </MaskedLine>
             </h3>
 

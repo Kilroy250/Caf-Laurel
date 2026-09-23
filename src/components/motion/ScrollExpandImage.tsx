@@ -70,7 +70,7 @@ export function ScrollExpandImage({
             </motion.span>
             <motion.span
               style={reduce ? undefined : { x: spreadRight }}
-              className="display-serif ml-[0.2em] whitespace-nowrap text-[clamp(2rem,6vw,5.5rem)] text-cream"
+              className="display-script ml-[0.2em] whitespace-nowrap text-[clamp(2rem,6vw,5.5rem)] text-cream"
             >
               {rightWord}
             </motion.span>

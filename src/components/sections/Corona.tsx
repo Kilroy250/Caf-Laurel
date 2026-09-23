@@ -24,7 +24,7 @@ export function Corona() {
               <span className="display">Con manos</span>
             </MaskedLine>
             <MaskedLine delay={0.08}>
-              <span className="display-serif text-rust">humildes.</span>
+              <span className="display-script text-rust">humildes.</span>
             </MaskedLine>
           </h2>
 
