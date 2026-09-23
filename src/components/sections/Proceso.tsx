@@ -1,7 +1,16 @@
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
 
-const STEPS = [
+type Step = {
+  n: string;
+  title: string;
+  subtitle: string;
+  text: string;
+  image?: string;
+  alt?: string;
+};
+
+const STEPS: Step[] = [
   {
     n: "01",
     title: "Cosecha selectiva",
