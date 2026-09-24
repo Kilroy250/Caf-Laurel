@@ -65,15 +65,15 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* centro — el producto: llena el alto libre entre la barra y el borde inferior */}
+        {/* centro — el producto, con aire alrededor */}
         <motion.div
           style={{ ...bag, scale: bagScale }}
           className="order-1 flex justify-center lg:order-2 lg:col-span-6"
         >
           <Parallax distance={18}>
-            {/* --h = alto de la bolsa; tope por alto de pantalla y por el ancho disponible (0.7787 = ancho/alto) */}
+            {/* --h = alto de la bolsa: en escritorio el 73 % del alto de pantalla (para bajarla, cambiar ese 73); tope por el ancho disponible (0.7787 = ancho/alto) */}
             <div
-              className="relative [--h:min(58svh,32rem,calc((100vw-3rem)/0.7787))] lg:[--h:min(calc(100svh-8rem),52rem,calc(64vw-4.5rem))]"
+              className="relative [--h:min(58svh,32rem,calc((100vw-3rem)/0.7787))] lg:[--h:min(73svh,46rem,calc(64vw-4.5rem))]"
               style={{
                 height: "var(--h)",
                 width: `calc(var(--h) * ${BAG_WIDTH} / ${BAG_HEIGHT})`,
