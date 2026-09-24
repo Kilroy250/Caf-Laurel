@@ -6,6 +6,11 @@ import { Parallax } from "@/components/motion/Primitives";
 import { goTo } from "@/components/SiteNav";
 import { INTRO_DONE, useIntro } from "@/components/intro-context";
 
+// producto-bolsa-transparente.webp, recortada al contenido: 883 × 1134 px.
+// Si se cambia la foto, hay que actualizar el ancho/alto y el 0.7787 de abajo.
+const BAG_WIDTH = 883;
+const BAG_HEIGHT = 1134;
+
 /** Aparición ligada al tramo [from, to] del progreso de la intro. */
 function useIntroReveal(progress: MotionValue<number>, from: number, to: number, rise: number) {
   const opacity = useTransform(progress, [from, to], [0, 1]);
@@ -25,7 +30,7 @@ export function Hero() {
   return (
     <section
       id="inicio"
-      className="relative flex min-h-screen items-center overflow-hidden bg-cream pt-28 pb-16 text-ink"
+      className="relative flex min-h-svh items-center overflow-hidden bg-cream pb-16 pt-24 text-ink lg:pb-6"
     >
       <div className="relative mx-auto grid w-full max-w-[1500px] grid-cols-1 items-center gap-14 px-6 sm:px-10 lg:grid-cols-12 lg:gap-8">
         {/* izquierda — el logotipo aterriza aquí desde la intro; su lugar no se anima */}
@@ -60,20 +65,27 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* centro — el producto */}
+        {/* centro — el producto: llena el alto libre entre la barra y el borde inferior */}
         <motion.div
           style={{ ...bag, scale: bagScale }}
           className="order-1 flex justify-center lg:order-2 lg:col-span-6"
         >
           <Parallax distance={18}>
-            <div className="relative aspect-[3/4] w-[min(72vw,26rem)]">
+            {/* --h = alto de la bolsa; tope por alto de pantalla y por el ancho disponible (0.7787 = ancho/alto) */}
+            <div
+              className="relative [--h:min(58svh,32rem,calc((100vw-3rem)/0.7787))] lg:[--h:min(calc(100svh-8rem),52rem,calc(64vw-4.5rem))]"
+              style={{
+                height: "var(--h)",
+                width: `calc(var(--h) * ${BAG_WIDTH} / ${BAG_HEIGHT})`,
+              }}
+            >
               <Image
-                src="/images/producto-bolsa-cafe-fondo-claro.jpg"
-                alt="Bolsa de Café Laurel — Huila, Finca Pedregal"
+                src="/images/producto-bolsa-transparente.webp"
+                alt="Bolsa de Café Laurel, Huila — Finca Pedregal, sobre una base de mármol"
                 fill
                 priority
-                sizes="(max-width: 1024px) 72vw, 26rem"
-                className="object-cover"
+                sizes="(max-width: 1024px) 80vw, 45vw"
+                className="object-contain drop-shadow-[0_26px_34px_rgba(18,16,9,0.14)]"
               />
             </div>
           </Parallax>

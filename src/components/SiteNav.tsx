@@ -7,16 +7,16 @@ import { CosecheroIcon } from "./CosecheroIcon";
 import { EASE_OUT_EXPO } from "./motion/Primitives";
 import { useIntro } from "./intro-context";
 
-export const SECTIONS = [
+// `n` es el número que lleva la sección en la página, no la posición en el menú
+const TABS = [
   { id: "nuestro-cafe", n: "01", label: "Nuestro café" },
-  { id: "por-que-existimos", n: "02", label: "Por qué existimos" },
-  { id: "corona", n: "03", label: "La corona de laurel" },
   { id: "origen", n: "04", label: "Origen" },
+  { id: "corona", n: "03", label: "La corona de laurel" },
   { id: "proceso", n: "05", label: "Nuestro proceso" },
 ];
 
-const IZQUIERDA = SECTIONS.slice(0, 2);
-const DERECHA = SECTIONS.slice(2);
+const IZQUIERDA = TABS.slice(0, 2);
+const DERECHA = TABS.slice(2);
 
 export function goTo(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -45,11 +45,11 @@ export function SiteNav() {
     <>
       {/* mix-blend-difference invierte la barra sola sobre fondos claros u oscuros */}
       <header className="pointer-events-none fixed inset-x-0 top-0 z-[90] mix-blend-difference">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center px-6 py-4 sm:px-10">
-          {/* after/before: elemento vacío contra el campesino; iguala su hueco al de las demás pestañas (el margen negativo descuenta el aire transparente del dibujo) */}
+        {/* --g: la misma separación entre las cuatro pestañas y el campesino; los 9.8px descuentan el aire transparente del dibujo (17,5 % de su caja de 56px) */}
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center px-6 py-4 [--g:clamp(2rem,6.5vw,7.5rem)] sm:px-10">
           <motion.div
             style={{ opacity: chromeOpacity, y: chromeY }}
-            className="flex items-center justify-between gap-3 after:block after:h-0 after:w-0 after:content-[''] lg:after:-mr-[9.8px]"
+            className="flex items-center"
           >
             <button onClick={inicio} className="pointer-events-auto shrink-0">
               <Image
@@ -61,15 +61,17 @@ export function SiteNav() {
               />
             </button>
 
-            {IZQUIERDA.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => jump(s.id)}
-                className="pointer-events-auto hidden micro whitespace-nowrap text-[0.8125rem] normal-case tracking-[0.01em] text-cream transition-opacity hover:opacity-60 lg:block"
-              >
-                {s.label}
-              </button>
-            ))}
+            <div className="ml-auto hidden items-center gap-[var(--g)] pr-[calc(var(--g)-9.8px)] lg:flex">
+              {IZQUIERDA.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => jump(s.id)}
+                  className="pointer-events-auto micro whitespace-nowrap text-[0.8125rem] normal-case tracking-[0.01em] text-cream transition-opacity hover:opacity-60"
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
           </motion.div>
 
           {/* el espacio del campesino existe siempre: las pestañas no se mueven cuando aterriza */}
@@ -87,17 +89,19 @@ export function SiteNav() {
 
           <motion.div
             style={{ opacity: chromeOpacity, y: chromeY }}
-            className="flex items-center justify-between gap-3 before:block before:h-0 before:w-0 before:content-[''] lg:before:-ml-[9.8px]"
+            className="flex items-center justify-end lg:justify-start"
           >
-            {DERECHA.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => jump(s.id)}
-                className="pointer-events-auto hidden micro whitespace-nowrap text-[0.8125rem] normal-case tracking-[0.01em] text-cream transition-opacity hover:opacity-60 lg:block"
-              >
-                {s.label}
-              </button>
-            ))}
+            <div className="hidden items-center gap-[var(--g)] pl-[calc(var(--g)-9.8px)] lg:flex">
+              {DERECHA.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => jump(s.id)}
+                  className="pointer-events-auto micro whitespace-nowrap text-[0.8125rem] normal-case tracking-[0.01em] text-cream transition-opacity hover:opacity-60"
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
 
             <button
               onClick={() => setOpen((v) => !v)}
@@ -118,7 +122,7 @@ export function SiteNav() {
             exit={{ clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: 0.7, ease: EASE_OUT_EXPO }}
           >
-            {SECTIONS.map((s, i) => (
+            {TABS.map((s, i) => (
               <motion.button
                 key={s.id}
                 onClick={() => jump(s.id)}
