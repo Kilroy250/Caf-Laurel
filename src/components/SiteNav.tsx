@@ -45,10 +45,11 @@ export function SiteNav() {
     <>
       {/* mix-blend-difference invierte la barra sola sobre fondos claros u oscuros */}
       <header className="pointer-events-none fixed inset-x-0 top-0 z-[90] mix-blend-difference">
-        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 px-6 py-4 sm:px-10">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center px-6 py-4 sm:px-10">
+          {/* after/before: elemento vacío contra el campesino; iguala su hueco al de las demás pestañas (el margen negativo descuenta el aire transparente del dibujo) */}
           <motion.div
             style={{ opacity: chromeOpacity, y: chromeY }}
-            className="flex items-center gap-5"
+            className="flex items-center justify-between gap-3 after:block after:h-0 after:w-0 after:content-[''] lg:after:-mr-[9.8px]"
           >
             <button onClick={inicio} className="pointer-events-auto shrink-0">
               <Image
@@ -64,7 +65,7 @@ export function SiteNav() {
               <button
                 key={s.id}
                 onClick={() => jump(s.id)}
-                className="pointer-events-auto hidden micro whitespace-nowrap tracking-[0.16em] text-cream transition-opacity hover:opacity-60 lg:block"
+                className="pointer-events-auto hidden micro whitespace-nowrap text-[0.8125rem] normal-case tracking-[0.01em] text-cream transition-opacity hover:opacity-60 lg:block"
               >
                 {s.label}
               </button>
@@ -86,13 +87,13 @@ export function SiteNav() {
 
           <motion.div
             style={{ opacity: chromeOpacity, y: chromeY }}
-            className="flex items-center justify-end gap-5"
+            className="flex items-center justify-between gap-3 before:block before:h-0 before:w-0 before:content-[''] lg:before:-ml-[9.8px]"
           >
             {DERECHA.map((s) => (
               <button
                 key={s.id}
                 onClick={() => jump(s.id)}
-                className="pointer-events-auto hidden micro whitespace-nowrap tracking-[0.16em] text-cream transition-opacity hover:opacity-60 lg:block"
+                className="pointer-events-auto hidden micro whitespace-nowrap text-[0.8125rem] normal-case tracking-[0.01em] text-cream transition-opacity hover:opacity-60 lg:block"
               >
                 {s.label}
               </button>
@@ -100,7 +101,7 @@ export function SiteNav() {
 
             <button
               onClick={() => setOpen((v) => !v)}
-              className="pointer-events-auto micro text-cream lg:hidden"
+              className="pointer-events-auto micro text-[0.8125rem] normal-case tracking-[0.01em] text-cream lg:hidden"
             >
               {open ? "Cerrar" : "Menú"}
             </button>
