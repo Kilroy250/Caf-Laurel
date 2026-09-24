@@ -19,7 +19,7 @@ export function Origen() {
   return (
     <section id="origen" className="bg-cream text-ink">
       <div className="px-6 pb-24 pt-20 sm:px-10 md:pb-32 md:pt-28">
-        <SectionHead n="04" label="El origen" tone="light" />
+        <SectionHead n="03" label="El origen" tone="light" />
 
         {/* la altura como protagonista */}
         <div className="mt-14 flex flex-wrap items-baseline gap-x-6 gap-y-2">

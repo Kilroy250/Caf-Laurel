@@ -10,8 +10,8 @@ import { useIntro } from "./intro-context";
 // `n` es el número que lleva la sección en la página, no la posición en el menú
 const TABS = [
   { id: "nuestro-cafe", n: "01", label: "Nuestro café" },
-  { id: "origen", n: "04", label: "Origen" },
-  { id: "corona", n: "03", label: "La corona de laurel" },
+  { id: "origen", n: "03", label: "Origen" },
+  { id: "corona", n: "04", label: "La corona de laurel" },
   { id: "proceso", n: "05", label: "Nuestro proceso" },
 ];
 

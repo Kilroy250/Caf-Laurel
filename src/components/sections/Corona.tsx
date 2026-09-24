@@ -6,7 +6,7 @@ export function Corona() {
   return (
     <section id="corona" className="bg-ink text-cream">
       <div className="px-6 pt-20 sm:px-10 md:pt-28">
-        <SectionHead n="03" label="Quienes lo cultivan" tone="dark" />
+        <SectionHead n="04" label="Quienes lo cultivan" tone="dark" />
       </div>
 
       <ScrollExpandImage

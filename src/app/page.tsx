@@ -14,8 +14,8 @@ export default function Home() {
         <Hero />
         <NuestroCafe />
         <PorQueExistimos />
-        <Corona />
         <Origen />
+        <Corona />
         <Proceso />
       </main>
       <Contacto />
