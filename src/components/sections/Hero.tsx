@@ -32,9 +32,10 @@ export function Hero() {
       id="inicio"
       className="relative flex min-h-svh items-center overflow-hidden bg-cream pb-16 pt-24 text-ink lg:pb-6"
     >
-      <div className="relative mx-auto grid w-full max-w-[1500px] grid-cols-1 items-center gap-14 px-6 sm:px-10 lg:grid-cols-12 lg:gap-8">
+      {/* --h = alto de la bolsa: en escritorio el 73 % del alto de pantalla (para bajarla, cambiar ese 73); tope por el ancho disponible (0.7787 = ancho/alto). Vive aquí porque el texto también lo usa */}
+      <div className="relative mx-auto grid w-full max-w-[1500px] grid-cols-1 items-center gap-14 px-6 [--h:min(58svh,32rem,calc((100vw-3rem)/0.7787))] sm:px-10 lg:grid-cols-[1fr_auto_1fr] lg:gap-x-12 lg:[--h:min(73svh,46rem,calc(64vw-4.5rem))]">
         {/* izquierda — el logotipo aterriza aquí desde la intro; su lugar no se anima */}
-        <div className="order-2 lg:order-1 lg:col-span-3">
+        <div className="order-2 lg:order-1">
           <div
             ref={heroLogoRef}
             className="w-full max-w-[15rem] lg:max-w-[17rem]"
@@ -68,12 +69,11 @@ export function Hero() {
         {/* centro — el producto, con aire alrededor */}
         <motion.div
           style={{ ...bag, scale: bagScale }}
-          className="order-1 flex justify-center lg:order-2 lg:col-span-6"
+          className="order-1 flex justify-center lg:order-2"
         >
           <Parallax distance={18}>
-            {/* --h = alto de la bolsa: en escritorio el 73 % del alto de pantalla (para bajarla, cambiar ese 73); tope por el ancho disponible (0.7787 = ancho/alto) */}
             <div
-              className="relative [--h:min(58svh,32rem,calc((100vw-3rem)/0.7787))] lg:[--h:min(73svh,46rem,calc(64vw-4.5rem))]"
+              className="relative"
               style={{
                 height: "var(--h)",
                 width: `calc(var(--h) * ${BAG_WIDTH} / ${BAG_HEIGHT})`,
@@ -91,27 +91,14 @@ export function Hero() {
           </Parallax>
         </motion.div>
 
-        {/* derecha — la esencia */}
-        <motion.div style={essence} className="order-3 lg:col-span-3">
-          <p className="micro text-rust">La marca</p>
-
-          <p className="mt-5 max-w-sm text-base leading-relaxed text-ink/75">
-            Café Laurel nace en la Finca Pedregal, en las montañas de La Plata,
-            Huila. Un solo origen, una sola familia. Existe para que el mejor
-            café de Colombia por fin se quede en Colombia, y para coronar a
-            quien lo cultiva.
+        {/* derecha — la esencia. El margen negativo adelanta el texto hasta 2.5rem del borde real de la bolsa: a esa altura la imagen deja libre el 18.8 % de su ancho (0.7787 × 0.188 = 0.1464) */}
+        <motion.div style={essence} className="order-3 lg:ml-[calc(-0.5rem-var(--h)*0.1464)]">
+          <p className="text-base leading-relaxed text-ink/75 lg:text-pretty lg:text-center lg:text-sm xl:text-[0.9375rem]">
+            Creemos que la grandeza no llega con el viento: se cultiva. Al
+            conmemorar al campesino y su berraquera, esas fuerzas arraigan en
+            nosotros. Por eso le entregamos la corona de laurel: su temple es
+            el espejo de nuestra grandeza.
           </p>
-
-          <div className="mt-8 h-px w-full bg-ink/12" />
-
-          <div className="mt-4 flex items-baseline justify-between">
-            <span className="micro text-ink/40">Altura</span>
-            <span className="text-base font-semibold">1.900 m s. n. m.</span>
-          </div>
-          <div className="mt-2 flex items-baseline justify-between">
-            <span className="micro text-ink/40">Notas</span>
-            <span className="text-base font-semibold">Caramelo · Vainilla</span>
-          </div>
         </motion.div>
       </div>
     </section>
