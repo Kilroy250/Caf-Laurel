@@ -1,26 +1,74 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Paleta: casi blanco con un fondo cálido + acento naranja quemado del empaque */
+  --color-cream: #faf8f3;
+  --color-cream-deep: #efeade;
+  --color-ink: #121009;
+  --color-ink-soft: #1e1b13;
+  --color-rust: #bc540b;
+  --color-rust-deep: #8f2901;
+  --color-stone: #8a8378;
+
+  --font-sans: var(--font-archivo);
+  --font-script: var(--font-script-brand);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  background: var(--color-cream);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* En la capa de componentes, para que las utilidades de Tailwind
+   (leading-*, tracking-*) puedan ajustarlas puntualmente. Fuera de una
+   capa, estas reglas ganarían siempre a cualquier utilidad. */
+@layer components {
+  /* Tipografía display: tracking negativo, el detalle que separa
+     un titular "cuidado" de uno por defecto. */
+  .display {
+    font-weight: 900;
+    letter-spacing: -0.045em;
+    line-height: 0.86;
+    text-transform: uppercase;
+  }
+
+  /* Manuscrita de marca (la misma del logotipo). Las escrituras tienen
+     altura de x pequeña: piden cuerpo mayor y algo más de interlínea. */
+  .display-script {
+    font-family: var(--font-script);
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.05;
+    text-transform: none;
+  }
+
+  .micro {
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .rule {
+    height: 1px;
+    width: 100%;
+  }
+}
+
+::selection {
+  background: var(--color-rust);
+  color: var(--color-cream);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
