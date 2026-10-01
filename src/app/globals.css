@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Pantallas donde una escena puede quedarse fija mientras se hace scroll:
+   anchas y con altura suficiente para que quepa entera. Misma condición
+   que PIN_QUERY en src/components/useMediaQuery.ts */
+@custom-variant pin (@media (min-width: 64rem) and (min-height: 40rem));
+
 @theme inline {
   /* Paleta: casi blanco con un fondo cálido + acento naranja quemado del empaque */
   --color-cream: #faf8f3;

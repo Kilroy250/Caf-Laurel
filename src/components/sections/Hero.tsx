@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { type MotionValue, motion, useTransform } from "framer-motion";
 import { Parallax } from "@/components/motion/Primitives";
-import { goTo } from "@/components/SiteNav";
+import { abrirPedido } from "@/components/sections/NuestroCafe";
+import { ArrowIcon } from "@/components/Icons";
 import { INTRO_DONE, useIntro } from "@/components/intro-context";
 
 // producto-bolsa-transparente.webp, recortada al contenido: 883 × 1134 px.
@@ -55,12 +56,12 @@ export function Hero() {
             <p className="micro mt-6 text-ink/40">Finca Pedregal · La Plata, Huila</p>
 
             <button
-              onClick={() => goTo("nuestro-cafe")}
+              onClick={() => abrirPedido()}
               className="group mt-8 inline-flex items-center gap-3 rounded-full bg-ink py-3.5 pl-6 pr-3.5 text-cream transition-colors hover:bg-rust"
             >
               <span className="micro">Quiero uno</span>
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cream text-ink transition-transform group-hover:translate-x-0.5">
-                →
+                <ArrowIcon className="h-4 w-4" />
               </span>
             </button>
           </motion.div>

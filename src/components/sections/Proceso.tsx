@@ -44,7 +44,7 @@ export function Proceso() {
   return (
     <section id="proceso" className="bg-ink text-cream">
       <div className="px-6 pb-24 pt-20 sm:px-10 md:pb-32 md:pt-28">
-        <SectionHead n="05" label="Del árbol a tu taza" tone="dark" />
+        <SectionHead n="04" label="Del árbol a tu taza" tone="dark" />
 
         <div className="mt-14 grid gap-14 lg:grid-cols-12 lg:gap-10">
           {/* columna fija */}

@@ -19,24 +19,32 @@ export function Origen() {
   return (
     <section id="origen" className="bg-cream text-ink">
       <div className="px-6 pb-24 pt-20 sm:px-10 md:pb-32 md:pt-28">
-        <SectionHead n="03" label="El origen" tone="light" />
+        <SectionHead n="02" label="El origen" tone="light" />
 
-        {/* la altura como protagonista */}
-        <div className="mt-14 flex flex-wrap items-baseline gap-x-6 gap-y-2">
-          <h2 className="display text-[clamp(4.5rem,20vw,18rem)] leading-[0.78]">
-            <CountUp to={1900} />
-          </h2>
-          <span className="micro pb-4 text-rust">metros sobre el nivel del mar</span>
-        </div>
+        {/* la altura como protagonista: cifra y unidad forman un solo bloque */}
+        <h2 className="mt-14 flex items-start gap-[0.04em] text-[clamp(5rem,21vw,19rem)]">
+          <span className="sr-only">1.900 metros sobre el nivel del mar</span>
+          {/* el ancho de "1.900" queda reservado: la unidad no se mueve mientras la cifra cuenta */}
+          <span aria-hidden className="display relative leading-[0.78] tabular-nums">
+            <span className="invisible">1.900</span>
+            <CountUp to={1900} className="absolute inset-0 text-right" />
+          </span>
+          <span aria-hidden className="pt-[0.06em]">
+            <span className="display block text-[0.2em] normal-case leading-none text-rust">m s. n. m.</span>
+            <span className="micro mt-3 hidden max-w-[24ch] sm:block text-[max(0.6875rem,0.045em)] leading-snug text-ink/45">
+              Metros sobre el nivel del mar
+            </span>
+          </span>
+        </h2>
 
         <div className="mt-16 grid gap-14 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5">
             <h3 className="text-[clamp(1.8rem,4vw,3rem)] leading-[0.95]">
               <MaskedLine>
-                <span className="display">Madura</span>
+                <span className="display">Más altura,</span>
               </MaskedLine>
               <MaskedLine delay={0.08}>
-                <span className="display-script text-rust">despacio.</span>
+                <span className="display-script text-rust">más tiempo en la mata.</span>
               </MaskedLine>
             </h3>
 

@@ -6,13 +6,15 @@ import { AnimatePresence, motion, useTransform } from "framer-motion";
 import { CosecheroIcon } from "./CosecheroIcon";
 import { EASE_OUT_EXPO } from "./motion/Primitives";
 import { useIntro } from "./intro-context";
+import { WhatsAppIcon } from "./Icons";
+import { WHATSAPP_VISIBLE, waLink } from "@/lib/contacto";
 
-// `n` es el número que lleva la sección en la página, no la posición en el menú
+// `n` es el número que lleva la sección en la página
 const TABS = [
   { id: "nuestro-cafe", n: "01", label: "Nuestro café" },
-  { id: "origen", n: "03", label: "Origen" },
-  { id: "corona", n: "04", label: "La corona de laurel" },
-  { id: "proceso", n: "05", label: "Nuestro proceso" },
+  { id: "origen", n: "02", label: "Origen" },
+  { id: "corona", n: "03", label: "La corona de laurel" },
+  { id: "proceso", n: "04", label: "Nuestro proceso" },
 ];
 
 const IZQUIERDA = TABS.slice(0, 2);
@@ -137,6 +139,19 @@ export function SiteNav() {
                 </span>
               </motion.button>
             ))}
+
+            <motion.a
+              href={waLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.15 + TABS.length * 0.07, duration: 0.6 }}
+              className="mt-10 inline-flex items-center gap-3 text-cream/70"
+            >
+              <WhatsAppIcon className="h-5 w-5 text-rust" />
+              <span className="micro">Pedidos · {WHATSAPP_VISIBLE}</span>
+            </motion.a>
           </motion.div>
         )}
       </AnimatePresence>

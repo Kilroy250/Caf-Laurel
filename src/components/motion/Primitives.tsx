@@ -2,7 +2,9 @@
 
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import {
+  type MotionValue,
   motion,
+  transform,
   useInView,
   useReducedMotion,
   useScroll,
@@ -11,6 +13,20 @@ import {
 } from "framer-motion";
 
 export const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+
+/**
+ * Como useTransform(valor, entrada, salida), pero calculado siempre en JavaScript.
+ * framer-motion 13 delega opacity y clipPath ligados a useScroll({ target }) a la
+ * línea de tiempo nativa del navegador, que mide mal los bloques más altos que la
+ * pantalla con contenido fijo (sticky). Usar para esas dos propiedades.
+ */
+export function useScrollLinked<T extends number | string>(
+  value: MotionValue<number>,
+  input: number[],
+  output: T[],
+) {
+  return useTransform(value, (v) => transform(v, input, output));
+}
 
 /** Una línea de texto que sube desde detrás de una máscara. */
 export function MaskedLine({
@@ -28,22 +44,29 @@ export function MaskedLine({
   onMount?: boolean;
 }) {
   const reduce = useReducedMotion();
-  const from = reduce ? { opacity: 0 } : { y: "112%" };
-  const to = reduce ? { opacity: 1 } : { y: 0 };
+  const variants = {
+    hidden: reduce ? { opacity: 0 } : { y: "112%" },
+    shown: reduce ? { opacity: 1 } : { y: 0 },
+  };
 
+  // Se observa la máscara, no el texto: el texto empieza escondido detrás de
+  // ella y, con interlineados altos (la manuscrita), el observador nunca lo vería.
   return (
-    <span className="block overflow-hidden pt-[0.22em] -mt-[0.22em] pb-[0.12em]">
+    <motion.span
+      className="block overflow-hidden pt-[0.22em] -mt-[0.22em] pb-[0.12em]"
+      initial="hidden"
+      {...(onMount
+        ? { animate: "shown" }
+        : { whileInView: "shown", viewport: { once: true, margin: "-12%" } })}
+    >
       <motion.span
         className={`block ${className ?? ""}`}
-        initial={from}
-        {...(onMount
-          ? { animate: to }
-          : { whileInView: to, viewport: { once: true, margin: "-12%" } })}
+        variants={variants}
         transition={{ duration, delay, ease: EASE_OUT_EXPO }}
       >
         {children}
       </motion.span>
-    </span>
+    </motion.span>
   );
 }
 
