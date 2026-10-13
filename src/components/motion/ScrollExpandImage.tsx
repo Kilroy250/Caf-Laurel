@@ -47,7 +47,11 @@ export function ScrollExpandImage({
   const endY = useTransform(scrollYProgress, [0.62, 0.8], [36, 0]);
 
   return (
-    <div ref={ref} className={reduce ? "relative" : "relative h-[340vh]"}>
+    <div ref={ref} className={reduce ? "relative pin:snap-start" : "relative h-[340vh] pin:snap-start"}>
+      {/* segundo encuadre: la foto abierta con el cuadro final ya presente */}
+      {!reduce && children && (
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[200vh] h-px pin:snap-start" />
+      )}
       <div className="sticky top-0 flex h-svh items-center justify-center overflow-hidden bg-ink">
         <motion.div
           style={

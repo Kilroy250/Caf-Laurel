@@ -6,6 +6,7 @@ import {
   StaggerItem,
 } from "@/components/motion/Primitives";
 import { ImageSlot } from "@/components/motion/ImageSlot";
+import { BeanDrift } from "@/components/motion/BeanDrift";
 import { SectionHead } from "@/components/SectionHead";
 
 const DATOS = [
@@ -17,8 +18,11 @@ const DATOS = [
 
 export function Origen() {
   return (
-    <section id="origen" className="bg-cream text-ink">
-      <div className="px-6 pb-24 pt-20 sm:px-10 md:pb-32 md:pt-28">
+    <section id="origen" className="relative overflow-hidden bg-cream text-ink">
+      {/* granos suspendidos detrás del contenido: pasan por detrás de la foto */}
+      <BeanDrift />
+      {/* encuadre 1: la altura */}
+      <div className="relative px-6 pt-20 sm:px-10 md:pt-28 pin:flex pin:h-svh pin:snap-start pin:flex-col pin:justify-center pin:pb-10 pin:pt-24">
         <SectionHead n="02" label="El origen" tone="light" />
 
         {/* la altura como protagonista: cifra y unidad forman un solo bloque */}
@@ -37,19 +41,22 @@ export function Origen() {
           </span>
         </h2>
 
-        <div className="mt-16 grid gap-14 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-5">
-            <h3 className="text-[clamp(1.8rem,4vw,3rem)] leading-[0.95]">
-              <MaskedLine>
-                <span className="display">Más altura,</span>
-              </MaskedLine>
-              <MaskedLine delay={0.08}>
-                <span className="display-script text-rust">más tiempo en la mata.</span>
-              </MaskedLine>
-            </h3>
+        <h3 className="mt-12 text-[clamp(1.8rem,4vw,3.25rem)] leading-[0.95] pin:mt-[min(6svh,4rem)]">
+          <MaskedLine>
+            <span className="display">Más altura,</span>
+          </MaskedLine>
+          <MaskedLine delay={0.08}>
+            <span className="display-script text-rust">más tiempo en la mata.</span>
+          </MaskedLine>
+        </h3>
+      </div>
 
-            <Reveal delay={0.15}>
-              <p className="mt-7 max-w-md text-lg leading-relaxed text-ink/75">
+      {/* encuadre 2: la finca */}
+      <div className="relative px-6 pb-24 pt-16 sm:px-10 md:pb-32 pin:flex pin:min-h-svh pin:snap-start pin:items-center pin:py-24">
+        <div className="grid w-full gap-14 lg:grid-cols-12 lg:items-center lg:gap-10">
+          <div className="lg:col-span-5">
+            <Reveal delay={0.05}>
+              <p className="max-w-md text-lg leading-relaxed text-ink/75">
                 En las montañas de La Plata, al sur del Huila, está la Finca
                 Pedregal. A esta altura el café pasa más tiempo en la mata: más
                 dulzor, más cuerpo, y una acidez limpia y brillante.

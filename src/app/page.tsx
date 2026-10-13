@@ -5,6 +5,7 @@ import { Corona } from "@/components/sections/Corona";
 import { Origen } from "@/components/sections/Origen";
 import { Proceso } from "@/components/sections/Proceso";
 import { Contacto } from "@/components/sections/Contacto";
+import { Pedido } from "@/components/Pedido";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
         <Proceso />
       </main>
       <Contacto />
+      <Pedido />
     </Experience>
   );
 }

@@ -1,5 +1,11 @@
+"use client";
+
+import { useRef } from "react";
+import { useScroll } from "framer-motion";
 import { MaskedLine, Reveal } from "@/components/motion/Primitives";
-import { ImageSlot } from "@/components/motion/ImageSlot";
+import { ScrollSequence } from "@/components/motion/ScrollSequence";
+import { useMediaQuery } from "@/components/useMediaQuery";
+import { CierreTaza } from "@/components/sections/CierreTaza";
 import { SectionHead } from "@/components/SectionHead";
 
 const PASOS = [
@@ -41,8 +47,16 @@ const PASOS = [
 ];
 
 export function Proceso() {
+  const pasosRef = useRef<HTMLOListElement>(null);
+  const cuadroRef = useRef<HTMLDivElement>(null);
+  const wide = useMediaQuery("(min-width: 64rem)");
+  // escritorio: la tostadora (fija a la izquierda) avanza mientras se leen las cinco etapas
+  const { scrollYProgress: pasos } = useScroll({ target: pasosRef, offset: ["start 0.75", "end 0.6"] });
+  // móvil: la columna no es fija, avanza mientras el cuadro cruza la pantalla
+  const { scrollYProgress: cuadro } = useScroll({ target: cuadroRef, offset: ["start end", "end start"] });
+
   return (
-    <section id="proceso" className="bg-ink text-cream">
+    <section id="proceso" className="bg-ink text-cream pin:snap-start">
       <div className="px-6 pb-24 pt-20 sm:px-10 md:pb-32 md:pt-28">
         <SectionHead n="04" label="Del árbol a tu taza" tone="dark" />
 
@@ -67,11 +81,14 @@ export function Proceso() {
               </Reveal>
 
               <Reveal delay={0.2}>
-                <div className="mt-10 hidden max-w-xs lg:block">
-                  <ImageSlot
-                    tone="ink"
-                    ratio="aspect-[4/5]"
-                    note="Primer plano de las manos del recolector sosteniendo cerezas rojas. Un detalle humano, no un paisaje."
+                <div ref={cuadroRef} className="relative mt-10 aspect-[4/5] w-full max-w-sm overflow-hidden bg-ink-soft lg:max-w-[min(24rem,calc((100svh-21rem)*0.8))]">
+                  <ScrollSequence
+                    folder="/secuencias/tostadora"
+                    count={60}
+                    progress={wide ? pasos : cuadro}
+                    stillFrame={20}
+                    label="Granos de café girando en la bandeja de una tostadora"
+                    className="absolute inset-0 h-full w-full"
                   />
                 </div>
               </Reveal>
@@ -79,7 +96,7 @@ export function Proceso() {
           </div>
 
           {/* etapas */}
-          <ol className="lg:col-span-7 lg:col-start-6">
+          <ol ref={pasosRef} className="lg:col-span-7 lg:col-start-6">
             {PASOS.map((p, i) => (
               <li key={p.n} className="border-t border-cream/12 py-10 first:border-t-0 first:pt-0">
                 <Reveal delay={0.05}>
@@ -104,6 +121,8 @@ export function Proceso() {
           </ol>
         </div>
       </div>
+
+      <CierreTaza />
     </section>
   );
 }

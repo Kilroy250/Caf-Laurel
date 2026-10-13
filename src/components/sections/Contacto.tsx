@@ -2,13 +2,13 @@
 
 import Image from "next/image";
 import { MaskedLine, Reveal, Stagger, StaggerItem } from "@/components/motion/Primitives";
-import { abrirPedido } from "@/components/sections/NuestroCafe";
+import { abrirPedido } from "@/components/Pedido";
 import { ArrowIcon, InstagramIcon, WhatsAppIcon } from "@/components/Icons";
 import { INSTAGRAM, INSTAGRAM_URL, WHATSAPP_VISIBLE, waLink } from "@/lib/contacto";
 
 export function Contacto() {
   return (
-    <footer id="contacto" className="bg-cream text-ink">
+    <footer id="contacto" className="bg-cream text-ink pin:snap-start">
       <div className="px-6 pb-10 pt-24 sm:px-10 md:pt-32">
         {/* cierre: una sola invitación clara */}
         <div className="grid gap-12 lg:grid-cols-12 lg:items-end lg:gap-10">

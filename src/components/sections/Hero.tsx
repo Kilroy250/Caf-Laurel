@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { type MotionValue, motion, useTransform } from "framer-motion";
 import { Parallax } from "@/components/motion/Primitives";
-import { abrirPedido } from "@/components/sections/NuestroCafe";
+import { abrirPedido } from "@/components/Pedido";
 import { ArrowIcon } from "@/components/Icons";
 import { INTRO_DONE, useIntro } from "@/components/intro-context";
 
@@ -31,7 +31,7 @@ export function Hero() {
   return (
     <section
       id="inicio"
-      className="relative flex min-h-svh items-center overflow-hidden bg-cream pb-16 pt-24 text-ink lg:pb-6"
+      className="relative flex min-h-svh items-center overflow-hidden bg-cream pb-16 pt-24 text-ink lg:pb-6 pin:snap-start"
     >
       {/* --h = alto de la bolsa: en escritorio el 73 % del alto de pantalla (para bajarla, cambiar ese 73); tope por el ancho disponible (0.7787 = ancho/alto). Vive aquí porque el texto también lo usa */}
       <div className="relative mx-auto grid w-full max-w-[1500px] grid-cols-1 items-center gap-14 px-6 [--h:min(58svh,32rem,calc((100vw-3rem)/0.7787))] sm:px-10 lg:grid-cols-[1fr_auto_1fr] lg:gap-x-12 lg:[--h:min(73svh,46rem,calc(64vw-4.5rem))]">

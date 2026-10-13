@@ -24,6 +24,15 @@ html {
   background: var(--color-cream);
 }
 
+/* Encuadres: al soltar el scroll cerca del inicio de una escena, la página se
+   acomoda en ella (las secciones marcan sus encuadres con pin:snap-start).
+   "proximity" = solo atrae cuando estás cerca; lejos, el scroll es libre. */
+@media (min-width: 64rem) and (min-height: 40rem) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+}
+
 body {
   font-family: var(--font-sans);
   overflow-x: hidden;
