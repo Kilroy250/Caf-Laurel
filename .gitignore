@@ -43,3 +43,8 @@ next-env.d.ts
 # material de trabajo (fotos y videos originales), no forma parte de la web
 /imagenes claude cafe laurel/
 /Cafe laurel imagenes pagina web/
+
+# archivos sueltos de trabajo en la raíz (no son parte de la web)
+/*.png
+/*.jpg
+/*.skill

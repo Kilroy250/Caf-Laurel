@@ -85,6 +85,7 @@ export function Proceso() {
                   <ScrollSequence
                     folder="/secuencias/tostadora"
                     count={60}
+                    paso={wide ? 1 : 2}
                     progress={wide ? pasos : cuadro}
                     stillFrame={20}
                     label="Granos de café girando en la bandeja de una tostadora"

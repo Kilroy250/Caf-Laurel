@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ScrollSequence } from "@/components/motion/ScrollSequence";
 import { useScrollLinked } from "@/components/motion/Primitives";
+import { useMediaQuery } from "@/components/useMediaQuery";
 
 /**
  * Cierre del proceso: la escena queda fija y el café se sirve a medida que
@@ -12,6 +13,9 @@ import { useScrollLinked } from "@/components/motion/Primitives";
 export function CierreTaza() {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  // pantalla vertical (celular): el video horizontal se ajusta al ancho en vez de recortarse
+  const vertical = useMediaQuery("(max-aspect-ratio: 1/1)");
+  const compacta = useMediaQuery("(max-width: 63.98rem)");
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   // el vertido ocupa casi todo el tramo; el título llega al final
   const pour = useTransform(scrollYProgress, [0.05, 0.85], [0, 1]);
@@ -19,16 +23,19 @@ export function CierreTaza() {
   const titleY = useTransform(scrollYProgress, [0.55, 0.8], [30, 0]);
 
   return (
-    <div ref={ref} className={reduce ? "relative pin:snap-start" : "relative h-[220vh] pin:snap-start"}>
+    <div ref={ref} data-escena className={reduce ? "relative pin:snap-start" : "relative h-[220vh] pin:snap-start"}>
       {/* segundo encuadre: la taza servida y el título */}
       {!reduce && <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[120vh] h-px pin:snap-start" />}
       <div className="sticky top-0 h-svh overflow-hidden bg-black">
         <ScrollSequence
-          folder="/secuencias/taza"
+          folder="/secuencias/taza-porcelana"
           count={72}
           progress={pour}
           stillFrame={60}
-          label="Taza blanca de café negro sobre fondo negro"
+          label="Taza de porcelana con borde dorado sirviéndose de café negro"
+          fit={vertical ? "width" : "cover"}
+          zoom={1.25}
+          paso={compacta ? 2 : 1}
           className="absolute inset-0 h-full w-full"
         />
 
@@ -37,7 +44,7 @@ export function CierreTaza() {
 
         <motion.div
           style={reduce ? undefined : { opacity: titleOpacity, y: titleY }}
-          className="absolute inset-x-0 bottom-0 px-6 pb-16 sm:px-10 md:pb-20 lg:text-right"
+          className="absolute inset-x-0 bottom-0 px-6 pb-[calc(4rem+env(safe-area-inset-bottom))] sm:px-10 md:pb-20 lg:text-right"
         >
           <h2 className="text-[clamp(2.4rem,6vw,5rem)] leading-[0.95] text-cream">
             <span className="display block">Hasta llegar</span>

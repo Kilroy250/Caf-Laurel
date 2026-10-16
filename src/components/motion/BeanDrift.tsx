@@ -14,11 +14,18 @@ export type GranoConfig = {
   desktop?: boolean;
   /** para los granos que pasan detrás de texto: más tenues, no compiten con la lectura */
   opacity?: number;
+  /** solo en pantallas pequeñas (donde los `desktop` no se ven) */
+  movil?: boolean;
 };
 
 // Cada grano es una capa de profundidad: más cerca = más grande, más rápido y más nítido.
 // `desktop`: solo en pantallas medianas o más; en móvil quedarían sobre el texto.
 export const GRANOS_ORIGEN: GranoConfig[] = [
+  // celular: asoman por los bordes a lo largo de la sección (los de escritorio no se ven aquí).
+  // Sin desenfoque: la profundidad la dan el tamaño, la opacidad y la velocidad.
+  { left: "99%", top: "80%", size: 92, depth: 0.45, rot: [10, -120], blur: 0, movil: true, opacity: 0.6 },
+  { left: "1.5%", top: "58%", size: 104, depth: 0.6, rot: [-60, 40], blur: 0, movil: true, opacity: 0.85 },
+  { left: "101%", top: "36%", size: 118, depth: 0.9, rot: [30, 170], blur: 0, movil: true },
   { left: "74%", top: "3%", size: 120, depth: 1.25, rot: [-25, 120], blur: 0 },
   { left: "89%", top: "12%", size: 62, depth: 0.6, rot: [35, -110], blur: 1.5, desktop: true },
   { left: "84%", top: "19%", size: 38, depth: 0.35, rot: [0, 190], blur: 2.5, desktop: true },
@@ -71,6 +78,7 @@ function Grano({
   blur,
   desktop,
   opacity,
+  movil,
   progress,
   stage,
   stageStep,
@@ -99,7 +107,7 @@ function Grano({
         opacity,
         ...(reduce ? { rotate: rot[0] } : { y, rotate }),
       }}
-      className={`absolute -translate-x-1/2 ${desktop ? "hidden md:block" : ""}`}
+      className={`absolute -translate-x-1/2 ${desktop ? "hidden md:block" : movil ? "md:hidden" : ""}`}
     >
       {/* capa interna: el salto de paso, con resorte, sin pelear con el scroll */}
       <motion.div
@@ -118,14 +126,20 @@ function Grano({
           animate={idle && !reduce ? { y: [0, -14 * depth, 0], rotate: [0, 6 * (index % 2 ? 1 : -1), 0] } : undefined}
           transition={{ duration: 5 + (index % 4) * 1.3 + (1 - depth) * 2, repeat: Infinity, ease: "easeInOut", delay: index * 0.4 }}
         >
-          <Image
-            src="/images/grano-recorte.webp"
-            alt=""
-            width={420}
-            height={662}
-            sizes="180px"
-            className="h-auto w-full drop-shadow-[0_18px_22px_rgba(18,16,9,0.22)]"
-          />
+          {/* la caja mide lo que el grano (260 × 410); la imagen trae la sombra horneada
+              (436 × 641) y se sale de la caja lo que mide la sombra. Sin filtros CSS:
+              Safari de iPhone a veces dibuja drop-shadow como un rectángulo gris */}
+          <div className="relative aspect-[260/410] w-full">
+            <Image
+              src="/images/grano-sombra.webp"
+              alt=""
+              width={436}
+              height={641}
+              sizes="300px"
+              className="absolute h-auto max-w-none"
+              style={{ left: "-33.846%", top: "-21.463%", width: "167.692%" }}
+            />
+          </div>
         </motion.div>
       </motion.div>
     </motion.div>

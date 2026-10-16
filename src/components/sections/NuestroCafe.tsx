@@ -61,9 +61,10 @@ export function NuestroCafe() {
   const quieroUno = (
     <button
       onClick={() => abrirPedido()}
-      className="group inline-flex items-center gap-3 rounded-full bg-rust py-3.5 pl-6 pr-3.5 text-cream transition-colors hover:bg-cream hover:text-ink"
+      data-cta
+      className="press group inline-flex items-center gap-3 rounded-full bg-rust py-3.5 pl-6 pr-3.5 text-cream transition hover:bg-cream hover:text-ink"
     >
-      <span className="micro">Quiero uno</span>
+      <span className="micro">Comprar ahora</span>
       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cream text-ink transition-colors group-hover:bg-rust group-hover:text-cream">
         <ArrowIcon className="h-4 w-4" />
       </span>
@@ -97,8 +98,9 @@ export function NuestroCafe() {
               <Reveal delay={0.2}>
                 <p className="mt-7 max-w-sm text-lg leading-relaxed text-cream/70 pin:text-base xl:text-lg">
                   Ese café solía viajar lejos, porque afuera pagan más. Laurel
-                  existe para devolvértelo: un solo origen, una sola finca, un
-                  solo lote.
+                  existe para devolvértelo: café de origen único, de una sola
+                  finca, comprado directamente a la familia que lo cultiva,
+                  carga tras carga.
                 </p>
               </Reveal>
             </div>

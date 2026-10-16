@@ -4,6 +4,7 @@ import { type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Intro } from "./Intro";
 import { SiteNav } from "./SiteNav";
+import { SnapAssist } from "./SnapAssist";
 import { INTRO_RANGE, IntroContext, type IntroPhase } from "./intro-context";
 
 /**
@@ -35,6 +36,7 @@ export function Experience({ children }: { children: ReactNode }) {
         <Intro virtual={virtual} onArrive={arrive} onRelease={release} />
       )}
       <SiteNav />
+      <SnapAssist />
       {children}
     </IntroContext.Provider>
   );

@@ -5,6 +5,12 @@
    que PIN_QUERY en src/components/useMediaQuery.ts */
 @custom-variant pin (@media (min-width: 64rem) and (min-height: 40rem));
 
+/* Celular en horizontal: pantalla muy baja. Lo apilado no cabe, se reacomoda en fila. */
+@custom-variant bajo (@media (orientation: landscape) and (max-height: 32rem));
+
+/* Celular (o tablet) en vertical. Misma condición que VERTICAL_QUERY en useMediaQuery.ts */
+@custom-variant vertical (@media (max-width: 63.98rem) and (orientation: portrait));
+
 @theme inline {
   /* Paleta: casi blanco con un fondo cálido + acento naranja quemado del empaque */
   --color-cream: #faf8f3;
@@ -24,19 +30,15 @@ html {
   background: var(--color-cream);
 }
 
-/* Encuadres: al soltar el scroll cerca del inicio de una escena, la página se
-   acomoda en ella (las secciones marcan sus encuadres con pin:snap-start).
-   "proximity" = solo atrae cuando estás cerca; lejos, el scroll es libre. */
-@media (min-width: 64rem) and (min-height: 40rem) {
-  html {
-    scroll-snap-type: y proximity;
-  }
-}
+/* Encuadres: las secciones marcan sus puntos con pin:snap-start (solo la
+   clase; no usamos scroll-snap nativo). El imán vive en SnapAssist.tsx. */
 
 body {
   font-family: var(--font-sans);
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 /* En la capa de componentes, para que las utilidades de Tailwind
@@ -55,12 +57,27 @@ body {
   /* Manuscrita de marca (la misma del logotipo). Las escrituras tienen
      altura de x pequeña: piden cuerpo mayor y algo más de interlínea. */
   .display-script {
+    padding-inline: 0.14em;
+    margin-inline: -0.14em;
     font-family: var(--font-script);
     font-style: normal;
     font-weight: 400;
     letter-spacing: 0;
     line-height: 1.05;
     text-transform: none;
+  }
+
+  /* Énfasis solo con el color de la marca dentro de un párrafo */
+  .enfasis {
+    font-style: normal;
+    color: var(--color-rust);
+  }
+
+  /* Tipografía del párrafo de portada: grotesca neutra, seria y moderna */
+  .texto-cuento {
+    font-family: var(--font-texto-brand), var(--font-sans);
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .micro {
@@ -74,7 +91,42 @@ body {
     height: 1px;
     width: 100%;
   }
+
+  /* Respuesta al toque: en pantallas táctiles no existe el hover, así que
+     todo control que se toca se hunde un poco al presionarlo. Usa la propiedad
+     `scale` (no `transform`) para no pelear con las animaciones de framer-motion;
+     si el elemento tiene `transition` de Tailwind, ese ya incluye `scale`. */
+  .press {
+    transition: scale 0.12s ease;
+  }
+  .press:active {
+    scale: 0.97;
+  }
+
+  /* En celular las etiquetas micro suben a 12px: en 11px se leen mal a un brazo de distancia */
+  @media (max-width: 639px) {
+    .micro {
+      font-size: 0.75rem;
+    }
+  }
 }
+
+/* Controles: sin el destello gris de iOS/Android y sin la espera del doble toque */
+a,
+button,
+[role="button"],
+[role="radio"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Títulos sin palabras huérfanas en pantallas angostas */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
 
 ::selection {
   background: var(--color-rust);

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
   AnimatePresence,
+  animate,
   motion,
   type MotionValue,
   type Variants,
@@ -12,6 +13,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { CosecheroIcon } from "./CosecheroIcon";
+import { VERTICAL_QUERY, useMediaQuery } from "./useMediaQuery";
 import { INTRO_DONE, INTRO_RANGE, useIntro } from "./intro-context";
 
 const EASE_SOFT = [0.22, 1, 0.36, 1] as const;
@@ -98,14 +100,19 @@ export function Intro({
     }
   }, [heroLogoRef, navMarkRef, logoDx, logoDy, logoS, markDx, markDy, markS]);
 
-  // el logotipo viaja a la izquierda en la primera parte del recorrido
-  const logoT = useTransform(progress, (p) => inOut(span(p, 0, 0.75)));
+  // Escritorio: el logotipo viaja a la izquierda en la primera parte del recorrido.
+  // Celular vertical: el logo sube (su lugar está arriba del grano), así que sale
+  // después del campesino y va siempre por debajo de él: nunca se cruzan.
+  const vertical = useMediaQuery(VERTICAL_QUERY);
+  const [logoDesde, logoHasta] = vertical ? [0.3, INTRO_DONE] : [0, 0.75];
+  const [markDesde, markHasta] = vertical ? [0, 0.72] : [0.08, INTRO_DONE];
+  const logoT = useTransform(progress, (p) => inOut(span(p, logoDesde, logoHasta)));
   const logoX = useTransform([logoT, logoDx], ([t, d]: number[]) => t * d);
   const logoY = useTransform([logoT, logoDy], ([t, d]: number[]) => t * d);
   const logoScale = useTransform([logoT, logoS], ([t, s]: number[]) => lerp(1, s, t));
 
   // el campesino arranca un poco después: crece, y luego se achica mientras sube
-  const markT = useTransform(progress, (p) => span(p, 0.08, INTRO_DONE));
+  const markT = useTransform(progress, (p) => span(p, markDesde, markHasta));
   const markX = useTransform([markT, markDx], ([t, d]: number[]) => inOut(t) * d);
   const markY = useTransform([markT, markDy], ([t, d]: number[]) => inOut(t) * d);
   const markScale = useTransform([markT, markS], ([t, s]: number[]) =>
@@ -131,9 +138,10 @@ export function Intro({
   // ── 2. la frase da paso a la marca ──
   useEffect(() => {
     if (!fontsReady) return;
-    const t = setTimeout(() => setStage("marca"), reduce ? 900 : 3200);
+    // en celular la frase dura un poco menos
+    const t = setTimeout(() => setStage("marca"), reduce ? 900 : vertical ? 2600 : 3200);
     return () => clearTimeout(t);
-  }, [fontsReady, reduce]);
+  }, [fontsReady, reduce, vertical]);
 
   // ── bloqueo del scroll real mientras dura la intro ──
   useEffect(() => {
@@ -180,6 +188,21 @@ export function Intro({
     if (reduce) progress.jump(1);
   }, [measure, virtual, progress, reduce]);
 
+  // al soltar el dedo: la entrada se completa sola, sin prisa (un tramo largo y suave).
+  // Si el dedo vuelve a tocar, se cancela y manda el dedo.
+  const finalizar = useRef<ReturnType<typeof animate> | null>(null);
+  const terminarSuave = useCallback(() => {
+    if (!interactiveRef.current || phaseRef.current !== "intro") return;
+    measure();
+    if (reduce) return advance();
+    const restante = 1 - virtual.get() / INTRO_RANGE;
+    finalizar.current?.stop();
+    finalizar.current = animate(virtual, INTRO_RANGE, {
+      duration: 0.9 + restante * 1.5,
+      ease: [0.45, 0, 0.2, 1],
+    });
+  }, [measure, virtual, reduce, advance]);
+
   useEffect(() => {
     let lastY = 0;
 
@@ -191,13 +214,21 @@ export function Intro({
     };
     const onTouchStart = (e: TouchEvent) => {
       lastY = e.touches[0].clientY;
+      finalizar.current?.stop();
     };
+    // con el dedo: más sensible que la rueda, y al soltar, un deslizamiento normal
+    // (más de una quinta parte del recorrido) termina la entrada solo. Uno muy corto
+    // avanza de a poco: con dos o tres así también se llega.
     const onTouchMove = (e: TouchEvent) => {
       e.preventDefault();
       const y = e.touches[0].clientY;
       if (phaseRef.current === "arrived") return settle();
-      push((lastY - y) * 1.6);
+      push((lastY - y) * 1.15);
       lastY = y;
+    };
+    const onTouchEnd = () => {
+      if (phaseRef.current !== "intro") return;
+      if (virtual.get() >= INTRO_RANGE * 0.16) terminarSuave();
     };
     const onKey = (e: KeyboardEvent) => {
       if (!["ArrowDown", "PageDown", " ", "Enter"].includes(e.key)) return;
@@ -208,14 +239,16 @@ export function Intro({
     window.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: false });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("keydown", onKey);
     };
-  }, [push, advance, settle]);
+  }, [push, advance, settle, virtual, terminarSuave]);
 
   useEffect(() => {
     if (interactive) measure();
@@ -282,7 +315,7 @@ export function Intro({
             className="absolute inset-0 flex items-center justify-center px-8"
           >
             <motion.p
-              className="display-script text-center text-[clamp(2.6rem,9vw,7rem)] text-ink will-change-[opacity,transform,filter]"
+              className="display-script px-[0.3em] text-center text-[clamp(2.6rem,9vw,7rem)] text-ink will-change-[opacity,transform,filter]"
               initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.97, filter: "blur(10px)" }}
               animate={
                 reduce
@@ -291,7 +324,7 @@ export function Intro({
                       opacity: 1,
                       scale: 1,
                       filter: "blur(0px)",
-                      transition: { duration: 1.6, ease: EASE_SOFT },
+                      transition: { duration: vertical ? 1.2 : 1.6, ease: EASE_SOFT },
                     }
               }
               exit={
@@ -301,7 +334,7 @@ export function Intro({
                       opacity: 0,
                       scale: 1.04,
                       filter: "blur(8px)",
-                      transition: { duration: 0.9, ease: [0.4, 0, 0.2, 1] },
+                      transition: { duration: vertical ? 0.7 : 0.9, ease: [0.4, 0, 0.2, 1] },
                     }
               }
             >
@@ -319,12 +352,28 @@ export function Intro({
             variants={{ hidden: {}, show: { transition: { staggerChildren: 0.3 } } }}
           >
             {/* espacio reservado: el tamaño no cambia mientras aparece */}
-            <div ref={logoStart} className="aspect-[760/307] w-[min(46vw,15rem)]">
+            <div ref={markStart} className="h-[min(34vw,13rem)] w-[min(34vw,13rem)]">
+              <motion.div
+                className="h-full w-full text-ink"
+                style={{ x: markX, y: markY, scale: markScale, opacity: handedOff ? 0 : 1 }}
+              >
+                <motion.div variants={logoEntrance} className="h-full w-full">
+                  <CosecheroIcon className="h-full w-full" />
+                </motion.div>
+              </motion.div>
+            </div>
+
+            {/* el logotipo va debajo: así el campesino sube y el logo se va a la izquierda sin cruzarse */}
+            <div ref={logoStart} className="mt-10 aspect-[760/307] w-[min(46vw,15rem)]">
               <motion.div
                 className="h-full w-full"
                 style={{ x: logoX, y: logoY, scale: logoScale, opacity: handedOff ? 0 : 1 }}
               >
-                <motion.div variants={logoEntrance} className="h-full w-full">
+                <motion.div
+                  variants={logoEntrance}
+                  onAnimationComplete={(def) => def === "show" && setInteractive(true)}
+                  className="h-full w-full"
+                >
                   <Image
                     src="/images/logo-cafe-laurel-negro.png"
                     alt="Café Laurel"
@@ -336,21 +385,6 @@ export function Intro({
                 </motion.div>
               </motion.div>
             </div>
-
-            <div ref={markStart} className="mt-10 h-[min(34vw,13rem)] w-[min(34vw,13rem)]">
-              <motion.div
-                className="h-full w-full text-ink"
-                style={{ x: markX, y: markY, scale: markScale, opacity: handedOff ? 0 : 1 }}
-              >
-                <motion.div
-                  variants={logoEntrance}
-                  onAnimationComplete={(def) => def === "show" && setInteractive(true)}
-                  className="h-full w-full"
-                >
-                  <CosecheroIcon className="h-full w-full" />
-                </motion.div>
-              </motion.div>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -358,7 +392,7 @@ export function Intro({
       {/* aviso de deslizar — solo existe aquí, y aparece justo cuando el gesto funciona */}
       {interactive && !handedOff && (
         <motion.div
-          className="absolute inset-x-0 bottom-10 flex justify-center"
+          className="absolute inset-x-0 bottom-[calc(2.5rem+env(safe-area-inset-bottom))] flex justify-center"
           style={{ opacity: cue }}
         >
           <motion.button
@@ -367,7 +401,7 @@ export function Intro({
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: EASE_SOFT }}
-            className="group flex flex-col items-center gap-3"
+            className="group flex flex-col items-center gap-3 p-3"
           >
             <span className="micro text-ink/40 transition-colors group-hover:text-rust">
               Desliza para descubrir

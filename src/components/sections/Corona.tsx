@@ -19,7 +19,7 @@ export function Corona() {
         <div className="grid gap-6 lg:grid-cols-12 lg:items-end lg:gap-10">
           <div className="lg:col-span-6">
             <p className="micro text-cream/60">Laura &amp; José Enrique Ceballos · Finca Pedregal</p>
-            <h2 className="display mt-4 text-[clamp(2.2rem,6vw,5rem)] text-cream">
+            <h2 className="display mt-4 text-[clamp(2.2rem,6vw,5rem)] text-cream bajo:mt-2 bajo:text-[2rem]">
               La corona
               <br />
               es de ellos.
@@ -32,7 +32,7 @@ export function Corona() {
               el crédito. Café Laurel nace para conmemorarlo y agradecerle: la
               corona de laurel, símbolo de victoria, le pertenece.
             </p>
-            <p>
+            <p className="bajo:hidden">
               Laura y José Enrique Ceballos cultivan este café con amor, esfuerzo
               y dedicación. La grandeza de este café nace de la grandeza de
               quienes lo producen.
