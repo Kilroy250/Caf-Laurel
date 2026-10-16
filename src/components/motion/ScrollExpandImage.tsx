@@ -59,12 +59,12 @@ export function ScrollExpandImage({
   const endY = useTransform(scrollYProgress, [0.62, 0.8], [36, 0]);
 
   return (
-    <div ref={ref} data-escena className={reduce ? "relative pin:snap-start" : "relative h-[340vh] pin:snap-start"}>
+    <div ref={ref} data-escena className={reduce ? "relative bg-ink pin:snap-start" : "relative h-[340vh] bg-ink pin:snap-start"}>
       {/* segundo encuadre: la foto abierta con el cuadro final ya presente */}
       {!reduce && children && (
         <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[200vh] h-px pin:snap-start" />
       )}
-      <div className="sticky top-0 flex h-svh items-center justify-center overflow-hidden bg-ink">
+      <div className="sticky top-0 flex h-svh items-center justify-center overflow-hidden">
         <motion.div
           style={reduce ? undefined : { scaleX: sx, scaleY: sy }}
           className="absolute inset-0 overflow-hidden"

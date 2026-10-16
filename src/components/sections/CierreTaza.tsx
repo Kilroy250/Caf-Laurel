@@ -23,10 +23,10 @@ export function CierreTaza() {
   const titleY = useTransform(scrollYProgress, [0.55, 0.8], [30, 0]);
 
   return (
-    <div ref={ref} data-escena className={reduce ? "relative pin:snap-start" : "relative h-[220vh] pin:snap-start"}>
+    <div ref={ref} data-escena className={reduce ? "relative bg-black pin:snap-start" : "relative h-[220vh] bg-black pin:snap-start"}>
       {/* segundo encuadre: la taza servida y el título */}
       {!reduce && <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[120vh] h-px pin:snap-start" />}
-      <div className="sticky top-0 h-svh overflow-hidden bg-black">
+      <div className="sticky top-0 h-svh overflow-hidden">
         <ScrollSequence
           folder="/secuencias/taza-porcelana"
           count={72}
