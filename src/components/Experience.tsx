@@ -5,6 +5,7 @@ import { useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Intro } from "./Intro";
 import { SiteNav } from "./SiteNav";
 import { SnapAssist } from "./SnapAssist";
+import { FondoSafari } from "./FondoSafari";
 import { INTRO_RANGE, IntroContext, type IntroPhase } from "./intro-context";
 
 /**
@@ -37,6 +38,7 @@ export function Experience({ children }: { children: ReactNode }) {
       )}
       <SiteNav />
       <SnapAssist />
+      <FondoSafari />
       {children}
     </IntroContext.Provider>
   );
