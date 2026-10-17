@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRef } from "react";
-import { type MotionValue, motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { type MotionValue, motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
 import { Parallax, useScrollLinked } from "@/components/motion/Primitives";
 import { abrirPedido } from "@/components/Pedido";
 import { ArrowIcon } from "@/components/Icons";
@@ -36,6 +36,17 @@ export function Hero() {
   const grano = useIntroReveal(progress, granoDesde, granoHasta, 180);
   const granoScale = useTransform(progress, [granoDesde, granoHasta], [0.78, 1]);
   const granoRotate = useTransform(progress, [granoDesde, granoHasta], [-16, 0]);
+
+  // celular: el grano sigue una copia suavizada (resorte) de su tramo, así termina
+  // frenando despacio en vez de detenerse de golpe
+  const tramoGrano = useTransform(progress, [granoDesde, granoHasta], [0, 1]);
+  const suave = useSpring(tramoGrano, { stiffness: 60, damping: 18, mass: 1 });
+  const granoMovil = {
+    opacity: useTransform(suave, [0, 0.6], [0, 1]),
+    y: useTransform(suave, [0, 1], [180, 0]),
+    scale: useTransform(suave, [0, 1], [0.78, 1]),
+    rotate: useTransform(suave, [0, 1], [-16, 0]),
+  };
 
   // salida: al bajar a la siguiente sección el grano sube, se encoge y se desvanece
   const sectionRef = useRef<HTMLElement>(null);
@@ -94,7 +105,7 @@ export function Hero() {
 
         {/* centro — el grano con el campesino quemado, flotando */}
         <motion.div
-          style={{ ...grano, scale: granoScale, rotate: granoRotate }}
+          style={vertical && !reduce ? granoMovil : { ...grano, scale: granoScale, rotate: granoRotate }}
           className="order-1 flex justify-center lg:order-2 vertical:order-3 vertical:mt-8"
         >
           <motion.div style={reduce ? undefined : { y: salidaY, scale: salidaScale, opacity: salidaOpacity }}>
