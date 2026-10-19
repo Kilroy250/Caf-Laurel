@@ -6,7 +6,7 @@ import { useIntro } from "./intro-context";
 import { PIN_QUERY } from "./useMediaQuery";
 
 /** Qué tan cerca (fracción del alto de pantalla) hay que quedar para que el encuadre atraiga. */
-const UMBRAL = 0.12;
+const UMBRAL = 0.08;
 /** Tiempo sin scroll que cuenta como "soltó" (incluye la inercia del trackpad). */
 const QUIETO_MS = 160;
 

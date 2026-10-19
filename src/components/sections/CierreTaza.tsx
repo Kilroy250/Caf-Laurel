@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ScrollSequence } from "@/components/motion/ScrollSequence";
-import { useScrollLinked } from "@/components/motion/Primitives";
+import { useProgresoSuave, useScrollLinked } from "@/components/motion/Primitives";
 import { useMediaQuery } from "@/components/useMediaQuery";
 
 /**
@@ -16,7 +16,8 @@ export function CierreTaza() {
   // pantalla vertical (celular): el video horizontal se ajusta al ancho en vez de recortarse
   const vertical = useMediaQuery("(max-aspect-ratio: 1/1)");
   const compacta = useMediaQuery("(max-width: 63.98rem)");
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const { scrollYProgress: crudo } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const scrollYProgress = useProgresoSuave(crudo);
   // el vertido ocupa casi todo el tramo; el título llega al final
   const pour = useTransform(scrollYProgress, [0.05, 0.85], [0, 1]);
   const titleOpacity = useScrollLinked(scrollYProgress, [0.55, 0.8], [0, 1]);
@@ -24,8 +25,6 @@ export function CierreTaza() {
 
   return (
     <div ref={ref} data-escena className={reduce ? "relative bg-black pin:snap-start" : "relative h-[220vh] bg-black pin:snap-start"}>
-      {/* segundo encuadre: la taza servida y el título */}
-      {!reduce && <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[120vh] h-px pin:snap-start" />}
       <div className="sticky top-0 h-svh overflow-hidden">
         <ScrollSequence
           folder="/secuencias/taza-porcelana"

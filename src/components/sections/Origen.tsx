@@ -18,12 +18,14 @@ const DATOS = [
 
 export function Origen() {
   return (
-    <section id="origen" className="relative overflow-hidden bg-cream text-ink pin:snap-start">
+    <section id="origen" className="relative overflow-hidden bg-cream text-ink pin:overflow-clip pin:snap-start">
       {/* granos suspendidos detrás del contenido: pasan por detrás de la foto */}
       <BeanDrift />
 
-      {/* un solo encuadre: la altura arriba; debajo, la finca y su foto */}
-      <div className="relative px-6 pb-24 pt-20 sm:px-10 md:pt-28 pin:flex pin:h-svh pin:flex-col pin:justify-center pin:pb-10 pin:pt-24">
+      {/* un solo encuadre: la altura arriba; debajo, la finca y su foto.
+          Computador: el encuadre se queda fijo durante 70vh de scroll para poder leerlo */}
+      <div className="relative pin:h-[170vh]">
+      <div className="relative px-6 pb-24 pt-20 sm:px-10 md:pt-28 pin:sticky pin:top-0 pin:flex pin:h-svh pin:flex-col pin:justify-center pin:pb-10 pin:pt-24">
         <SectionHead n="02" label="El origen" tone="light" />
 
         {/* la altura como protagonista: cifra y unidad forman un solo bloque */}
@@ -103,6 +105,7 @@ export function Origen() {
             </Reveal>
           </div>
         </div>
+      </div>
       </div>
     </section>
   );

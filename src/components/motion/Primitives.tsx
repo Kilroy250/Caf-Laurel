@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { useMediaQuery } from "@/components/useMediaQuery";
 import {
   type MotionValue,
   motion,
@@ -13,6 +14,34 @@ import {
 } from "framer-motion";
 
 export const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+
+/** Computador (pantalla ancha). En celular todo queda como estaba. */
+function useEscritorio() {
+  return useMediaQuery("(min-width: 64rem)");
+}
+
+/**
+ * Ritmo de las apariciones en computador: más pausadas y se disparan cuando el
+ * elemento ya está bien dentro de la pantalla (no apenas asoma), así se alcanzan a ver.
+ */
+function useRitmo() {
+  const escritorio = useEscritorio();
+  return {
+    lento: escritorio ? 1.35 : 1,
+    margen: (movil: string) => (escritorio ? "-22%" : movil),
+  };
+}
+
+/**
+ * Progreso de scroll suavizado (solo computador): sigue a la página con un leve
+ * retraso elástico, así las escenas ligadas al scroll se mueven con fluidez aunque
+ * la rueda o el trackpad den saltos. El scroll en sí sigue siendo el nativo.
+ */
+export function useProgresoSuave(valor: MotionValue<number>) {
+  const escritorio = useEscritorio();
+  const suave = useSpring(valor, { stiffness: 110, damping: 28, mass: 0.6, restDelta: 0.0005 });
+  return escritorio ? suave : valor;
+}
 
 /**
  * Como useTransform(valor, entrada, salida), pero calculado siempre en JavaScript.
@@ -44,6 +73,7 @@ export function MaskedLine({
   onMount?: boolean;
 }) {
   const reduce = useReducedMotion();
+  const ritmo = useRitmo();
   const variants = {
     hidden: reduce ? { opacity: 0 } : { y: "112%" },
     shown: reduce ? { opacity: 1 } : { y: 0 },
@@ -57,12 +87,12 @@ export function MaskedLine({
       initial="hidden"
       {...(onMount
         ? { animate: "shown" }
-        : { whileInView: "shown", viewport: { once: true, margin: "-12%" } })}
+        : { whileInView: "shown", viewport: { once: true, margin: ritmo.margen("-12%") } })}
     >
       <motion.span
         className={`block ${className ?? ""}`}
         variants={variants}
-        transition={{ duration, delay, ease: EASE_OUT_EXPO }}
+        transition={{ duration: duration * ritmo.lento, delay, ease: EASE_OUT_EXPO }}
       >
         {children}
       </motion.span>
@@ -83,6 +113,7 @@ export function MaskedWords({
   stagger?: number;
 }) {
   const reduce = useReducedMotion();
+  const ritmo = useRitmo();
   const words = text.split(" ");
 
   return (
@@ -93,9 +124,9 @@ export function MaskedWords({
             className="inline-block"
             initial={reduce ? { opacity: 0 } : { y: "112%" }}
             whileInView={reduce ? { opacity: 1 } : { y: 0 }}
-            viewport={{ once: true, margin: "-12%" }}
+            viewport={{ once: true, margin: ritmo.margen("-12%") }}
             transition={{
-              duration: 0.9,
+              duration: 0.9 * ritmo.lento,
               delay: delay + i * stagger,
               ease: EASE_OUT_EXPO,
             }}
@@ -122,14 +153,15 @@ export function Reveal({
   className?: string;
 }) {
   const reduce = useReducedMotion();
+  const ritmo = useRitmo();
 
   return (
     <motion.div
       className={className}
       initial={reduce ? { opacity: 0 } : { opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-10%" }}
-      transition={{ duration: 0.8, delay, ease: EASE_OUT_EXPO }}
+      viewport={{ once: true, margin: ritmo.margen("-10%") }}
+      transition={{ duration: 0.8 * ritmo.lento, delay, ease: EASE_OUT_EXPO }}
     >
       {children}
     </motion.div>
@@ -148,15 +180,16 @@ export function Stagger({
   stagger?: number;
   delay?: number;
 }) {
+  const ritmo = useRitmo();
   return (
     <motion.div
       className={className}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, margin: "-10%" }}
+      viewport={{ once: true, margin: ritmo.margen("-10%") }}
       variants={{
         hidden: {},
-        show: { transition: { staggerChildren: stagger, delayChildren: delay } },
+        show: { transition: { staggerChildren: stagger * ritmo.lento, delayChildren: delay } },
       }}
     >
       {children}
@@ -171,12 +204,13 @@ export function StaggerItem({
   children: ReactNode;
   className?: string;
 }) {
+  const ritmo = useRitmo();
   return (
     <motion.div
       className={className}
       variants={{
         hidden: { opacity: 0, y: 18 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: EASE_OUT_EXPO } },
+        show: { opacity: 1, y: 0, transition: { duration: 0.75 * ritmo.lento, ease: EASE_OUT_EXPO } },
       }}
     >
       {children}

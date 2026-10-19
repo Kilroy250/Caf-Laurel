@@ -191,15 +191,19 @@ export function Intro({
   // al soltar el dedo: la entrada se completa sola, sin prisa (un tramo largo y suave).
   // Si el dedo vuelve a tocar, se cancela y manda el dedo.
   const finalizar = useRef<ReturnType<typeof animate> | null>(null);
-  const terminarSuave = useCallback(() => {
+  const completando = useRef(false); // true mientras la entrada se completa sola
+  const terminarSuave = useCallback((ritmo = 1) => {
     if (!interactiveRef.current || phaseRef.current !== "intro") return;
     measure();
     if (reduce) return advance();
     const restante = 1 - virtual.get() / INTRO_RANGE;
     finalizar.current?.stop();
+    completando.current = true;
     finalizar.current = animate(virtual, INTRO_RANGE, {
-      duration: (0.9 + restante * 1.5) * 1.03,
+      duration: (0.9 + restante * 1.5) * 1.03 * ritmo,
       ease: [0.45, 0, 0.2, 1],
+      onComplete: () => (completando.current = false),
+      onStop: () => (completando.current = false),
     });
   }, [measure, virtual, reduce, advance]);
 
@@ -210,7 +214,13 @@ export function Intro({
       if (e.ctrlKey) return; // pellizco de zoom
       e.preventDefault();
       if (phaseRef.current === "arrived") return settle();
-      push(wheelPixels(e));
+      // rueda / trackpad: igual que el dedo en celular. Mientras la entrada se completa
+      // sola, la rueda no la empuja (así no corre); hacia atrás sí la puede devolver.
+      const px = wheelPixels(e);
+      if (completando.current && px > 0) return;
+      if (px < 0) finalizar.current?.stop();
+      push(px * 0.55);
+      if (px > 0 && virtual.get() >= INTRO_RANGE * 0.08) terminarSuave(0.82);
     };
     const onTouchStart = (e: TouchEvent) => {
       lastY = e.touches[0].clientY;
@@ -228,7 +238,7 @@ export function Intro({
     };
     const onTouchEnd = () => {
       if (phaseRef.current !== "intro") return;
-      if (virtual.get() >= INTRO_RANGE * 0.16) terminarSuave();
+      if (virtual.get() >= INTRO_RANGE * 0.16) terminarSuave(1);
     };
     const onKey = (e: KeyboardEvent) => {
       if (!["ArrowDown", "PageDown", " ", "Enter"].includes(e.key)) return;

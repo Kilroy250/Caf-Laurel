@@ -3,8 +3,8 @@
 import { type ReactNode, useRef } from "react";
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { useScrollLinked } from "./Primitives";
-import { useMediaQuery } from "@/components/useMediaQuery";
+import { useProgresoSuave, useScrollLinked } from "./Primitives";
+import { PIN_QUERY, useMediaQuery } from "@/components/useMediaQuery";
 
 /**
  * La imagen arranca como una ventana y se abre a pantalla completa mientras el
@@ -34,10 +34,15 @@ export function ScrollExpandImage({
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const ancho = useMediaQuery("(min-width: 48rem)");
-  const { scrollYProgress } = useScroll({
+  const escritorio = useMediaQuery(PIN_QUERY);
+  const { scrollYProgress: crudo } = useScroll({
     target: ref,
     offset: ["start start", "end end"],
   });
+  // computador: la escena es más larga y la animación termina al 79 %; el resto del
+  // recorrido es una pausa con el cuadro final ya completo, para poder leerlo
+  const crudoEscalado = useTransform(crudo, (v) => (escritorio ? Math.min(v / 0.79, 1) : v));
+  const scrollYProgress = useProgresoSuave(crudoEscalado);
 
   // tamaño inicial de la ventana: columna angosta en escritorio, más ancha en celular
   const inicioX = ancho ? 0.34 : 0.72;
@@ -59,11 +64,7 @@ export function ScrollExpandImage({
   const endY = useTransform(scrollYProgress, [0.62, 0.8], [36, 0]);
 
   return (
-    <div ref={ref} data-escena className={reduce ? "relative bg-ink pin:snap-start" : "relative h-[340vh] bg-ink pin:snap-start"}>
-      {/* segundo encuadre: la foto abierta con el cuadro final ya presente */}
-      {!reduce && children && (
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[200vh] h-px pin:snap-start" />
-      )}
+    <div ref={ref} data-escena className={reduce ? "relative bg-ink pin:snap-start" : "relative h-[340vh] bg-ink pin:h-[430vh] pin:snap-start"}>
       <div className="sticky top-0 flex h-svh items-center justify-center overflow-hidden">
         <motion.div
           style={reduce ? undefined : { scaleX: sx, scaleY: sy }}

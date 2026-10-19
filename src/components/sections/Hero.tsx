@@ -40,7 +40,7 @@ export function Hero() {
   // celular: el grano sigue una copia suavizada (resorte) de su tramo, así termina
   // frenando despacio en vez de detenerse de golpe
   const tramoGrano = useTransform(progress, [granoDesde, granoHasta], [0, 1]);
-  const suave = useSpring(tramoGrano, { stiffness: 60, damping: 18, mass: 1 });
+  const suave = useSpring(tramoGrano, vertical ? { stiffness: 60, damping: 18, mass: 1 } : { stiffness: 80, damping: 19, mass: 1 });
   const granoMovil = {
     opacity: useTransform(suave, [0, 0.6], [0, 1]),
     y: useTransform(suave, [0, 1], [180, 0]),
@@ -105,7 +105,7 @@ export function Hero() {
 
         {/* centro — el grano con el campesino quemado, flotando */}
         <motion.div
-          style={vertical && !reduce ? granoMovil : { ...grano, scale: granoScale, rotate: granoRotate }}
+          style={!reduce ? granoMovil : { ...grano, scale: granoScale, rotate: granoRotate }}
           className="order-1 flex justify-center lg:order-2 vertical:order-3 vertical:mt-8"
         >
           <motion.div style={reduce ? undefined : { y: salidaY, scale: salidaScale, opacity: salidaOpacity }}>

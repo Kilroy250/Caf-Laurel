@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { useScroll } from "framer-motion";
-import { MaskedLine, Reveal } from "@/components/motion/Primitives";
+import { MaskedLine, Reveal, useProgresoSuave } from "@/components/motion/Primitives";
 import { ScrollSequence } from "@/components/motion/ScrollSequence";
 import { useMediaQuery } from "@/components/useMediaQuery";
 import { CierreTaza } from "@/components/sections/CierreTaza";
@@ -51,7 +51,8 @@ export function Proceso() {
   const cuadroRef = useRef<HTMLDivElement>(null);
   const wide = useMediaQuery("(min-width: 64rem)");
   // escritorio: la tostadora (fija a la izquierda) avanza mientras se leen las cinco etapas
-  const { scrollYProgress: pasos } = useScroll({ target: pasosRef, offset: ["start 0.75", "end 0.6"] });
+  const { scrollYProgress: pasosCrudo } = useScroll({ target: pasosRef, offset: ["start 0.6", "end 0.6"] });
+  const pasos = useProgresoSuave(pasosCrudo);
   // móvil: la columna no es fija, avanza mientras el cuadro cruza la pantalla
   const { scrollYProgress: cuadro } = useScroll({ target: cuadroRef, offset: ["start end", "end start"] });
 
@@ -99,7 +100,11 @@ export function Proceso() {
           {/* etapas */}
           <ol ref={pasosRef} className="lg:col-span-7 lg:col-start-6">
             {PASOS.map((p, i) => (
-              <li key={p.n} className="border-t border-cream/12 py-10 first:border-t-0 first:pt-0">
+              // computador: cada etapa ocupa media pantalla, así se lee una a la vez mientras la tostadora avanza
+              <li
+                key={p.n}
+                className="border-t border-cream/12 py-10 first:border-t-0 first:pt-0 lg:flex lg:min-h-[58svh] lg:flex-col lg:justify-center lg:first:pt-10"
+              >
                 <Reveal delay={0.05}>
                   <div className="flex items-baseline gap-5">
                     <span className="display text-[clamp(2.5rem,6vw,4.5rem)] leading-none text-rust">

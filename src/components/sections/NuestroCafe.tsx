@@ -15,6 +15,7 @@ import {
   Reveal,
   Stagger,
   StaggerItem,
+  useProgresoSuave,
   useScrollLinked,
 } from "@/components/motion/Primitives";
 import { SectionHead } from "@/components/SectionHead";
@@ -39,23 +40,26 @@ export function NuestroCafe() {
   const sceneRef = useRef<HTMLDivElement>(null);
 
   // entrada: desde que la sección asoma hasta que toca el borde superior
-  const { scrollYProgress: entry } = useScroll({
+  const { scrollYProgress: entryCrudo } = useScroll({
     target: sceneRef,
     offset: ["start end", "start start"],
   });
   // escena fija: mientras la sección está anclada
-  const { scrollYProgress: scene } = useScroll({
+  const { scrollYProgress: sceneCrudo } = useScroll({
     target: sceneRef,
     offset: ["start start", "end end"],
   });
+  // computador: el progreso sigue al scroll con un leve retraso elástico (más fluido)
+  const entry = useProgresoSuave(entryCrudo);
+  const scene = useProgresoSuave(sceneCrudo);
 
   // la foto se abre desde un marco más estrecho y se asienta con un zoom lento
   const clip = useScrollLinked(entry, [0.15, 1], ["inset(14% 16% 14% 16%)", "inset(0% 0% 0% 0%)"]);
   const zoomIn = useTransform(entry, [0.15, 1], [1.22, 1.07]);
   const zoomHold = useTransform(scene, [0, 1], [1.07, 1]);
   const zoom = useTransform(() => (scene.get() > 0 ? zoomHold.get() : zoomIn.get()));
-  const cta = useScrollLinked(scene, [0.56, 0.7], [0, 1]);
-  const ctaY = useTransform(scene, [0.56, 0.7], [12, 0]);
+  const cta = useScrollLinked(scene, [0.76, 0.88], [0, 1]);
+  const ctaY = useTransform(scene, [0.76, 0.88], [12, 0]);
   const ctaEvents = useTransform(cta, (v) => (v > 0.5 ? "auto" : "none"));
 
   const quieroUno = (
@@ -73,10 +77,8 @@ export function NuestroCafe() {
 
   return (
     <section id="nuestro-cafe" className="bg-ink text-cream">
-      {/* 240vh de alto = la escena queda fija durante 140vh de scroll */}
-      <div ref={sceneRef} className="relative pin:h-[240vh] pin:snap-start">
-        {/* segundo encuadre: la ficha completa y el botón ya visibles */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[105vh] hidden h-px pin:block pin:snap-start" />
+      {/* 310vh de alto = la escena queda fija durante 210vh de scroll: las características llegan de a dos por gesto */}
+      <div ref={sceneRef} className="relative pin:h-[310vh] pin:snap-start">
         <div className="flex flex-col px-6 pb-20 pt-20 sm:px-10 md:pt-28 pin:sticky pin:top-0 pin:h-svh pin:pb-10 pin:pt-24">
           <SectionHead n="01" label="Nuestro café" tone="dark" />
 
@@ -168,7 +170,7 @@ function SpecList({ pinned, scene }: { pinned: boolean; scene: MotionValue<numbe
   return (
     <div>
       {SPECS.map((s, i) => (
-        <PinnedSpec key={s.label} scene={scene} from={0.04 + i * 0.1}>
+        <PinnedSpec key={s.label} scene={scene} from={i * 0.15}>
           <SpecText label={s.label} value={s.value} />
         </PinnedSpec>
       ))}
@@ -185,10 +187,10 @@ function PinnedSpec({
   from: number;
   children: ReactNode;
 }) {
-  const range = [from, from + 0.16];
+  const range = [from, from + 0.12];
   const line = useTransform(scene, range, [0, 1]);
-  const opacity = useScrollLinked(scene, [from + 0.04, from + 0.16], [0, 1]);
-  const y = useTransform(scene, [from + 0.04, from + 0.16], [14, 0]);
+  const opacity = useScrollLinked(scene, [from + 0.02, from + 0.12], [0, 1]);
+  const y = useTransform(scene, [from + 0.02, from + 0.12], [14, 0]);
 
   return (
     <div className="relative py-3 xl:py-3.5">
