@@ -148,8 +148,12 @@ export function Intro({
     if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     window.scrollTo({ top: 0, behavior: "instant" });
     document.body.style.overflow = "hidden";
+    // el espacio de la barra de scroll queda reservado mientras dura la intro: sin esto,
+    // al soltar el scroll la barra aparece (en computador) y la página se corre unos píxeles
+    document.documentElement.style.scrollbarGutter = "stable";
     return () => {
       document.body.style.overflow = "";
+      document.documentElement.style.scrollbarGutter = "";
     };
   }, []);
 
