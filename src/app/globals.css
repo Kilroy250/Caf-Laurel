@@ -128,6 +128,22 @@ h3 {
 }
 
 
+/* Granos de Origen en celular: el recorrido lo calcula el navegador ligado al scroll
+   (mismo trayecto que con framer-motion, pero pegado al dedo). Ver BeanDrift.tsx. */
+@keyframes grano-deriva {
+  from {
+    transform: translateY(var(--y0)) rotate(var(--r0));
+  }
+  to {
+    transform: translateY(var(--y1)) rotate(var(--r1));
+  }
+}
+.grano-deriva {
+  animation: grano-deriva linear both;
+  animation-timeline: --deriva-granos;
+  will-change: transform;
+}
+
 ::selection {
   background: var(--color-rust);
   color: var(--color-cream);

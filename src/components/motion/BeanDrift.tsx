@@ -1,8 +1,18 @@
 "use client";
 
-import { useRef } from "react";
+import { type RefObject, useRef, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { type MotionValue, motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { useMediaQuery } from "@/components/useMediaQuery";
+
+/** El navegador sabe ligar animaciones al scroll por sí mismo (Safari 26, Chrome). */
+function useLineaDeScrollNativa() {
+  return useSyncExternalStore(
+    () => () => {},
+    () => typeof CSS !== "undefined" && CSS.supports("view-timeline-name: --a"),
+    () => false,
+  );
+}
 
 export type GranoConfig = {
   left: string;
@@ -47,6 +57,9 @@ export function BeanDrift({
   stageStep = 0,
   idle = false,
   stageByDepth = true,
+  objetivo,
+  escalaTop,
+  suaveMovil = false,
 }: {
   className?: string;
   granos?: GranoConfig[];
@@ -56,14 +69,29 @@ export function BeanDrift({
   idle?: boolean;
   /** false: todos bajan lo mismo en cada paso (se mantienen las distancias, nunca se cruzan) */
   stageByDepth?: boolean;
+  /** bloque cuyo paso por la pantalla mueve los granos (por defecto, el contenedor mismo) */
+  objetivo?: RefObject<HTMLElement | null>;
+  /** multiplica el `top` de cada grano (cuando el contenedor es más bajo que el bloque que recorren) */
+  escalaTop?: number;
+  /** celular: el recorrido lo hace el navegador ligado al scroll (va pegado al dedo, sin tirones) */
+  suaveMovil?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const { scrollYProgress } = useScroll({ target: objetivo ?? ref, offset: ["start end", "end start"] });
+  const reduce = useReducedMotion();
+  const movil = useMediaQuery("(max-width: 63.98rem)");
+  const nativa = useLineaDeScrollNativa();
+  const css = suaveMovil && movil && nativa && !reduce && !objetivo;
 
   return (
-    <div ref={ref} aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className ?? ""}`}>
+    <div
+      ref={ref}
+      aria-hidden
+      style={css ? { viewTimelineName: "--deriva-granos" } : undefined}
+      className={`pointer-events-none absolute inset-0 overflow-hidden ${className ?? ""}`}
+    >
       {granos.map((g, i) => (
-        <Grano key={i} index={i} {...g} progress={scrollYProgress} stage={stage} stageStep={stageStep} idle={idle} stageByDepth={stageByDepth} />
+        <Grano key={i} index={i} {...g} top={escalaTop ? `calc(${g.top} * ${escalaTop})` : g.top} progress={scrollYProgress} stage={stage} stageStep={stageStep} idle={idle} stageByDepth={stageByDepth} css={css} />
       ))}
     </div>
   );
@@ -85,6 +113,7 @@ function Grano({
   idle,
   index,
   stageByDepth,
+  css,
 }: GranoConfig & {
   progress: MotionValue<number>;
   stage: number;
@@ -92,6 +121,7 @@ function Grano({
   idle: boolean;
   index: number;
   stageByDepth: boolean;
+  css: boolean;
 }) {
   const reduce = useReducedMotion();
   const y = useTransform(progress, [0, 1], [`${-depth * 30}vh`, `${depth * 30}vh`]);
@@ -105,9 +135,13 @@ function Grano({
         width: `clamp(${Math.round(size * 0.55)}px, ${(size / 14.4).toFixed(2)}vw, ${size}px)`,
         filter: blur ? `blur(${blur}px)` : undefined,
         opacity,
-        ...(reduce ? { rotate: rot[0] } : { y, rotate }),
+        ...(reduce
+          ? { rotate: rot[0] }
+          : css
+            ? ({ "--y0": `${-depth * 30}vh`, "--y1": `${depth * 30}vh`, "--r0": `${rot[0]}deg`, "--r1": `${rot[1]}deg` } as object)
+            : { y, rotate }),
       }}
-      className={`absolute -translate-x-1/2 ${desktop ? "hidden md:block" : movil ? "md:hidden" : ""}`}
+      className={`absolute -translate-x-1/2 ${css ? "grano-deriva" : ""} ${desktop ? "hidden md:block" : movil ? "md:hidden" : ""}`}
     >
       {/* capa interna: el salto de paso, con resorte, sin pelear con el scroll */}
       <motion.div

@@ -164,11 +164,12 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* señal de que hay más abajo: solo en celular vertical, sutil, y se va al empezar a deslizar */}
+      {/* señal de que hay más abajo: celular vertical y computador (debajo del grano), sutil,
+          y se va al empezar a deslizar */}
       <motion.div
         aria-hidden
         style={{ opacity: cueOpacity }}
-        className="pointer-events-none absolute inset-x-0 bottom-[6.25rem] hidden justify-center vertical:flex"
+        className="pointer-events-none absolute inset-x-0 bottom-[6.25rem] hidden justify-center vertical:flex lg:bottom-[4svh] lg:flex"
       >
         <motion.div style={{ opacity: essence.opacity }}>
           <motion.svg

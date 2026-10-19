@@ -64,6 +64,7 @@ export function MaskedLine({
   className,
   duration = 0.95,
   onMount = false,
+  enGrupo = false,
 }: {
   children: ReactNode;
   delay?: number;
@@ -71,6 +72,8 @@ export function MaskedLine({
   duration?: number;
   /** Para contenido ya visible al cargar: anima al montar, sin depender del scroll. */
   onMount?: boolean;
+  /** La activa el contenedor (initial="hidden" / whileInView="shown"): todas las líneas entran juntas. */
+  enGrupo?: boolean;
 }) {
   const reduce = useReducedMotion();
   const ritmo = useRitmo();
@@ -84,10 +87,11 @@ export function MaskedLine({
   return (
     <motion.span
       className="block overflow-hidden pt-[0.22em] -mt-[0.22em] pb-[0.12em]"
-      initial="hidden"
-      {...(onMount
-        ? { animate: "shown" }
-        : { whileInView: "shown", viewport: { once: true, margin: ritmo.margen("-12%") } })}
+      {...(enGrupo
+        ? {}
+        : onMount
+          ? { initial: "hidden", animate: "shown" }
+          : { initial: "hidden", whileInView: "shown", viewport: { once: true, margin: ritmo.margen("-12%") } })}
     >
       <motion.span
         className={`block ${className ?? ""}`}
@@ -200,9 +204,11 @@ export function Stagger({
 export function StaggerItem({
   children,
   className,
+  duracion = 0.75,
 }: {
   children: ReactNode;
   className?: string;
+  duracion?: number;
 }) {
   const ritmo = useRitmo();
   return (
@@ -210,7 +216,7 @@ export function StaggerItem({
       className={className}
       variants={{
         hidden: { opacity: 0, y: 18 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.75 * ritmo.lento, ease: EASE_OUT_EXPO } },
+        show: { opacity: 1, y: 0, transition: { duration: duracion * ritmo.lento, ease: EASE_OUT_EXPO } },
       }}
     >
       {children}

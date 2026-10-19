@@ -40,8 +40,10 @@ export function ScrollExpandImage({
     offset: ["start start", "end end"],
   });
   // computador: la escena es más larga y la animación termina al 79 %; el resto del
-  // recorrido es una pausa con el cuadro final ya completo, para poder leerlo
-  const crudoEscalado = useTransform(crudo, (v) => (escritorio ? Math.min(v / 0.79, 1) : v));
+  // recorrido es una pausa con el cuadro final ya completo, para poder leerlo.
+  // Celular: la foto se abre más rápido (termina al 60 %) y el cuadro final se sostiene
+  // más, así un deslizamiento fuerte no se pasa de largo a la siguiente sección
+  const crudoEscalado = useTransform(crudo, (v) => Math.min(v / (escritorio ? 0.79 : 0.6), 1));
   const scrollYProgress = useProgresoSuave(crudoEscalado);
 
   // tamaño inicial de la ventana: columna angosta en escritorio, más ancha en celular

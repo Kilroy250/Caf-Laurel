@@ -1,3 +1,6 @@
+"use client";
+
+import { useRef } from "react";
 import {
   CountUp,
   MaskedLine,
@@ -17,15 +20,20 @@ const DATOS = [
 ];
 
 export function Origen() {
+  const encuadre = useRef<HTMLDivElement>(null);
   return (
-    <section id="origen" className="relative overflow-hidden bg-cream text-ink pin:overflow-clip pin:snap-start">
+    <section id="origen" className="relative overflow-clip bg-cream text-ink pin:snap-start">
       {/* granos suspendidos detrás del contenido: pasan por detrás de la foto */}
-      <BeanDrift />
+      <BeanDrift className="pin:hidden" suaveMovil />
 
       {/* un solo encuadre: la altura arriba; debajo, la finca y su foto.
           Computador: el encuadre se queda fijo durante 70vh de scroll para poder leerlo */}
-      <div className="relative pin:h-[170vh]">
+      <div ref={encuadre} className="relative pin:h-[170vh]">
       <div className="relative px-6 pb-24 pt-20 sm:px-10 md:pt-28 pin:sticky pin:top-0 pin:flex pin:h-svh pin:flex-col pin:justify-center pin:pb-10 pin:pt-24">
+        {/* computador: los granos van dentro del encuadre fijo, así siguen bajando
+            mientras está quieto (antes subían con la sección y parecían devolverse).
+            escalaTop 1.7: arrancan donde estaban sobre los 170vh del bloque */}
+        <BeanDrift className="-z-10 hidden pin:block" objetivo={encuadre} escalaTop={1.7} />
         <SectionHead n="02" label="El origen" tone="light" />
 
         {/* la altura como protagonista: cifra y unidad forman un solo bloque */}

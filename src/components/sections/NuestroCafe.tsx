@@ -85,17 +85,22 @@ export function NuestroCafe() {
           <div className="mt-12 grid min-h-0 flex-1 gap-14 pin:mt-6 pin:grid-cols-12 pin:items-center pin:gap-8">
             {/* título + tesis */}
             <div className="pin:col-span-4">
-              <h2 className="text-[clamp(2.5rem,9vw,4rem)] leading-[0.9] pin:text-[clamp(2.4rem,3.6vw,4rem)]">
-                <MaskedLine>
+              {/* celular: las tres líneas entran juntas (antes la tercera quedaba esperando otro scroll) */}
+              <motion.h2
+                key={pinned ? "fija" : "flujo"}
+                {...(pinned ? {} : { initial: "hidden", whileInView: "shown", viewport: { once: true, margin: "-12%" } })}
+                className="text-[clamp(2.5rem,9vw,4rem)] leading-[0.9] pin:text-[clamp(2.4rem,3.6vw,4rem)]"
+              >
+                <MaskedLine enGrupo={!pinned}>
                   <span className="display">Antes se iba</span>
                 </MaskedLine>
-                <MaskedLine delay={0.08}>
+                <MaskedLine delay={0.08} enGrupo={!pinned}>
                   <span className="display">lejos.</span>
                 </MaskedLine>
-                <MaskedLine delay={0.16}>
+                <MaskedLine delay={0.16} enGrupo={!pinned}>
                   <span className="display-script text-rust">Ahora se queda en casa.</span>
                 </MaskedLine>
-              </h2>
+              </motion.h2>
 
               <Reveal delay={0.2}>
                 <p className="mt-7 max-w-sm text-lg leading-relaxed text-cream/70 pin:text-base xl:text-lg">
@@ -157,9 +162,10 @@ export function NuestroCafe() {
 function SpecList({ pinned, scene }: { pinned: boolean; scene: MotionValue<number> }) {
   if (!pinned) {
     return (
-      <Stagger delay={0.1}>
+      // celular: llegan de a una, un poco más pausadas
+      <Stagger delay={0.1} stagger={0.2}>
         {SPECS.map((s) => (
-          <StaggerItem key={s.label} className="border-t border-cream/12 py-3.5">
+          <StaggerItem key={s.label} duracion={1.05} className="border-t border-cream/12 py-3.5">
             <SpecText label={s.label} value={s.value} />
           </StaggerItem>
         ))}
