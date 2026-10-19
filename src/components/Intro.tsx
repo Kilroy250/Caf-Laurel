@@ -198,7 +198,7 @@ export function Intro({
     const restante = 1 - virtual.get() / INTRO_RANGE;
     finalizar.current?.stop();
     finalizar.current = animate(virtual, INTRO_RANGE, {
-      duration: 0.9 + restante * 1.5,
+      duration: (0.9 + restante * 1.5) * 1.03,
       ease: [0.45, 0, 0.2, 1],
     });
   }, [measure, virtual, reduce, advance]);
@@ -223,7 +223,7 @@ export function Intro({
       e.preventDefault();
       const y = e.touches[0].clientY;
       if (phaseRef.current === "arrived") return settle();
-      push((lastY - y) * 1.15);
+      push((lastY - y) * 1.115);
       lastY = y;
     };
     const onTouchEnd = () => {

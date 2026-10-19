@@ -331,8 +331,8 @@ function Contenido({
                 </div>
                 <div>
                   <p className="display text-[1.6rem] leading-none">Café Laurel</p>
-                  <p className="mt-2 text-[0.9375rem] leading-snug text-ink/60">Huila · Finca Pedregal</p>
-                  <p className="text-[0.9375rem] leading-snug text-ink/60">Caramelo, vainilla, melón dulce</p>
+                  <p className="mt-2 text-[0.9375rem] leading-snug text-ink/60">Huila</p>
+                  <p className="text-[0.9375rem] leading-snug text-ink/60">Finca Pedregal</p>
                 </div>
               </div>
               <h2 className="mt-8 leading-[0.95]">
@@ -472,7 +472,7 @@ function Contenido({
             </div>
 
             {/* cambio de modo, discreto. En escritorio va debajo del botón; en celular, encima de la barra */}
-            <Entra className="mt-5 text-center text-[0.9375rem] text-ink/60 pin:order-last pin:text-sm pin:text-ink/55">
+            <Entra className="mb-10 mt-1 text-center text-[0.8125rem] text-ink/55 pin:order-last pin:mb-0 pin:mt-5 pin:text-sm">
               {mayor ? (
                 <>
                   ¿Más de 25 unidades? Escríbenos y lo cotizamos.{" "}
