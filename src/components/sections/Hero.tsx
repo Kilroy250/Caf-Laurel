@@ -158,7 +158,7 @@ export function Hero() {
         <motion.div style={vertical ? { opacity: essence.opacity } : essence} className="order-3 flex justify-center lg:order-1 bajo:col-span-2 vertical:order-5 vertical:mt-8 vertical:[@media(max-height:704px)]:mt-2.5">
           <p className="texto-cuento max-w-[28rem] text-center text-[1.1875rem] leading-[1.5] text-ink vertical:max-w-none vertical:text-[0.96875rem] vertical:leading-[1.45] vertical:[@media(max-height:704px)]:text-[0.875rem] vertical:[@media(max-height:704px)]:leading-[1.4] text-balance lg:text-pretty lg:text-[1.0625rem] xl:text-[1.1875rem]">
             Creemos que la <em className="enfasis">grandeza</em> no llega con el viento:{" "}
-            <em className="enfasis">se cultiva.</em> Al honrar el temple y coraje
+            <em className="enfasis">se cultiva.</em> Al honrar el temple y la dedicación
             del campesino, le entregamos la corona de laurel.
           </p>
         </motion.div>

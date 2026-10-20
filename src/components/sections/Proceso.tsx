@@ -76,8 +76,7 @@ export function Proceso() {
 
               <Reveal delay={0.15}>
                 <p className="mt-6 max-w-xs text-lg leading-relaxed text-cream/70">
-                  Cinco etapas, todas en la finca. Así se hace el café en
-                  Pedregal.
+                  Cinco etapas. Así se hace nuestro Café Laurel.
                 </p>
               </Reveal>
 
